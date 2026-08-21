@@ -1,0 +1,29 @@
+{
+  "name": "sitekhata",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shared expense ledger for construction sites — Credence Innovations",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev:web": "turbo run dev --filter=@sitekhata/web",
+    "dev:mobile": "turbo run dev --filter=@sitekhata/mobile",
+    "db:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > packages/shared/src/types/database.ts",
+    "db:test": "psql \"$DATABASE_URL\" -f supabase/tests/rls_regression.sql"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.11",
+    "typescript": "~6.0.3",
+    "prettier": "^3.6.2"
+  },
+  "packageManager": "npm@11.11.0",
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
