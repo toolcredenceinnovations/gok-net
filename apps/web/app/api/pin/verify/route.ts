@@ -32,18 +32,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'You do not have permission for this' }, { status: 403 })
   }
 
-  const { action, pin, payload } = await request.json()
+  let requestBody: { action?: unknown; pin?: unknown; payload?: Record<string, unknown> }
+  try {
+    requestBody = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
+
+  const { action, pin, payload } = requestBody
   if (typeof pin !== 'string' || !/^\d{6}$/.test(pin)) {
     return NextResponse.json({ error: 'The PIN is 6 digits' }, { status: 400 })
   }
 
   // ── 3. PIN check, server-side only ───────────────────────────────────────
-  const admin = createAdminClient()
-  const { data: site } = await admin
+  let admin: ReturnType<typeof createAdminClient>
+  try {
+    admin = createAdminClient()
+  } catch (error) {
+    console.error('pin/verify is not configured', error)
+    return NextResponse.json(
+      { error: 'Payment service is not configured. Ask an administrator to add the server key.' },
+      { status: 503 }
+    )
+  }
+
+  const { data: site, error: siteError } = await admin
     .from('sites')
     .select('settings')
     .eq('id', siteId)
     .single()
+
+  if (siteError) {
+    console.error('pin/verify could not load site settings', siteError)
+    return NextResponse.json({ error: 'Could not load the action PIN settings. Try again.' }, { status: 503 })
+  }
 
   const pinHash = (site?.settings as { pin_hash?: string } | null)?.pin_hash
   if (!pinHash) {

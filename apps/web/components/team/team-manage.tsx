@@ -26,18 +26,20 @@ import { useSession } from '@/lib/auth/session-context'
 import { friendlyMessage, reportError } from '@/lib/errors'
 
 function InviteForm({ onDone }: { onDone: () => void }) {
-  const [phone, setPhone] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [role, setRole] = useState<Exclude<Role, 'owner'>>('member')
   const invite = useInviteMember()
 
   async function submit(event: React.FormEvent) {
     event.preventDefault()
     try {
-      const result = await invite.mutateAsync({ phone: phone.trim(), role })
+      const result = await invite.mutateAsync({ name: name.trim(), email: email.trim(), password, role })
       toast.success(
         result.kind === 'member'
           ? `${result.name} added as ${ROLE_LABEL[result.role]}`
-          : 'Invitation created. It will be claimed after their first sign-in.'
+          : 'Member account created.'
       )
       onDone()
     } catch (error) {
@@ -48,13 +50,30 @@ function InviteForm({ onDone }: { onDone: () => void }) {
   return (
     <form className="inline-create invite-form" onSubmit={submit}>
       <label>
-        <span>Phone number</span>
+        <span>Name</span>
         <input
           autoFocus
-          value={phone}
-          onChange={(event) => setPhone(event.target.value)}
-          placeholder="+91 98765 43210"
-          inputMode="tel"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          placeholder="Member name"
+        />
+      </label>
+      <label>
+        <span>Email address</span>
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="member@example.com"
+        />
+      </label>
+      <label>
+        <span>Temporary password</span>
+        <input
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="At least 8 characters"
         />
       </label>
       <label>
@@ -76,9 +95,9 @@ function InviteForm({ onDone }: { onDone: () => void }) {
       <button
         className="primary-button"
         type="submit"
-        disabled={invite.isPending || phone.trim().length < 7}
+        disabled={invite.isPending || name.trim().length < 2 || !email.includes('@') || password.length < 8}
       >
-        {invite.isPending ? 'Inviting…' : 'Invite member'}
+        {invite.isPending ? 'Creating…' : 'Create member'}
       </button>
     </form>
   )
@@ -88,7 +107,6 @@ export function TeamManage() {
   const { data, isLoading, isError, refetch } = useTeam()
   const members = data?.members ?? []
   const invitations = data?.invitations ?? []
-  const invitationsAvailable = data?.invitationsAvailable ?? true
   const changeRole = useChangeRole()
   const removeMember = useRemoveMember()
   const renewInvitation = useRenewInvitation()
@@ -158,30 +176,17 @@ export function TeamManage() {
           <p>Manage who can view, record and approve site expenses.</p>
         </div>
         <div className="heading-actions">
-          <button
+            <button
             className="primary-button"
             onClick={() => setInviteOpen(true)}
             disabled={inviteOpen}
           >
-            <UserPlus size={17} /> Invite member
+            <UserPlus size={17} /> Create member
           </button>
         </div>
       </header>
 
       {inviteOpen && <InviteForm onDone={() => setInviteOpen(false)} />}
-
-      {!isLoading && !invitationsAvailable && (
-        <div className="inline-confirm team-setup-note">
-          <Clock3 size={18} />
-          <div>
-            <strong>Pending invitations need a database update</strong>
-            <p>
-              You can still add anyone who has already signed in once. Apply the team invitations
-              migration to invite brand-new users.
-            </p>
-          </div>
-        </div>
-      )}
 
       <section className="mini-stat-grid team-stats">
         <article className="mini-stat">

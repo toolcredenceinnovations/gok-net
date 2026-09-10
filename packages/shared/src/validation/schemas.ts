@@ -11,7 +11,9 @@ export const CHEQUE_STATUSES = ['issued', 'cleared', 'bounced'] as const
 export const ATTACHMENT_TYPES = ['invoice', 'challan', 'other'] as const
 export const ROLES = ['owner', 'admin', 'member', 'viewer'] as const
 
-const uuid = z.string().uuid()
+// PostgreSQL's uuid type accepts any canonical 8-4-4-4-12 value, including
+// deterministic seed IDs that do not encode an RFC UUID version/variant.
+const uuid = z.string().guid()
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use a valid date')
 
 /** numeric(12,2) and amount > 0 in the database. */
@@ -115,6 +117,14 @@ export const teamInviteSchema = z.object({
   role: z.enum(['admin', 'member', 'viewer']),
 })
 export type TeamInviteInput = z.infer<typeof teamInviteSchema>
+
+export const teamMemberCreateSchema = z.object({
+  email: z.string().trim().email('Enter a valid email address'),
+  name: z.string().trim().min(2, 'Enter the member name').max(100),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(72),
+  role: z.enum(['admin', 'member', 'viewer']),
+})
+export type TeamMemberCreateInput = z.infer<typeof teamMemberCreateSchema>
 
 export const teamRoleChangeSchema = z.object({
   userId: uuid,

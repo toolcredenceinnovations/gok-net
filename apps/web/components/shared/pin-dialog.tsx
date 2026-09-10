@@ -42,17 +42,17 @@ export function PinDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, pin, payload }),
       })
-      const body = await res.json()
+      const body = (await res.json().catch(() => null)) as { error?: string; data?: unknown } | null
 
       if (!res.ok) {
-        setError(body.error ?? 'That did not work. Try again.')
+        setError(body?.error ?? `The server could not complete the request (${res.status}). Try again.`)
         return
       }
 
       track.pinUsed({ action: action === 'record_payment' ? 'mark_paid' : 'void' })
       setPin('')
       onOpenChange(false)
-      onSuccess?.(body.data)
+      onSuccess?.(body?.data)
     } catch {
       setError('Could not reach the server. Check your signal and try again.')
     } finally {

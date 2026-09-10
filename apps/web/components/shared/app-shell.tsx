@@ -4,9 +4,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { BarChart3, Bell, Building2, ChevronDown, ClipboardList, FileClock, HardHat, HelpCircle, Menu, Plus, Search, Settings, Tags, Users, WalletCards } from 'lucide-react'
-import { ROLE_LABEL, can, type Capability } from '@sitekhata/shared'
+import { can, type Capability } from '@sitekhata/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { HelpDialog } from '@/components/shared/help-dialog'
+import { UserAccountMenu } from '@/components/shared/user-account-menu'
 
 /**
  * Nav entries carry the capability that unlocks them, so a member never sees
@@ -39,13 +40,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const visiblePrimary = primaryNav.filter((item) => allowed(item.capability))
   const visibleManage = manageNav.filter((item) => allowed(item.capability))
-
-  const initials = session.name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('')
 
   return (
     <div className="app-shell">
@@ -90,11 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <HelpCircle size={18} />Help &amp; support
           </button>
           <Link className={`nav-item ${isActive('/settings') ? 'is-active' : ''}`} href="/settings"><Settings size={18} />Settings</Link>
-          <div className="user-card">
-            <span className="avatar">{initials || '·'}</span>
-            <span><strong>{session.name}</strong><small>{ROLE_LABEL[session.role]}</small></span>
-            <ChevronDown size={16} />
-          </div>
+          <UserAccountMenu />
         </div>
       </aside>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import {
   teamInvitationActionSchema,
+  teamMemberCreateSchema,
   teamInviteSchema,
   teamMemberRemoveSchema,
   teamRoleChangeSchema,
@@ -72,7 +73,40 @@ export async function POST(request: Request) {
   const context = await ownerContext()
   if ('error' in context) return context.error
   const { session, db } = context
-  const parsed = teamInviteSchema.safeParse(await request.json().catch(() => null))
+  const body = await request.json().catch(() => null)
+  const credentials = teamMemberCreateSchema.safeParse(body)
+  if (credentials.success) {
+    const { data: user, error: authError } = await db.auth.admin.createUser({
+      email: credentials.data.email,
+      password: credentials.data.password,
+      email_confirm: true,
+      user_metadata: { name: credentials.data.name },
+    })
+    if (authError || !user.user)
+      return NextResponse.json({ error: authError?.message ?? 'Could not create the account' }, { status: 400 })
+
+    const { error: membershipError } = await db.from('user_sites').insert({
+      user_id: user.user.id,
+      site_id: session.siteId,
+      role: credentials.data.role,
+    })
+    if (membershipError) {
+      await db.auth.admin.deleteUser(user.user.id)
+      return NextResponse.json({ error: 'Could not add the new account to this site' }, { status: 500 })
+    }
+    await db.from('user_profiles').update({ active_site_id: session.siteId }).eq('id', user.user.id)
+    await db.from('audit_log').insert({
+      site_id: session.siteId,
+      actor_id: session.userId,
+      action: 'member_added',
+      entity: 'user_sites',
+      entity_id: user.user.id,
+      after_json: { email: credentials.data.email, role: credentials.data.role },
+    })
+    return NextResponse.json({ data: { kind: 'member', name: credentials.data.name, role: credentials.data.role } })
+  }
+
+  const parsed = teamInviteSchema.safeParse(body)
   if (!parsed.success)
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? 'Check the details' },

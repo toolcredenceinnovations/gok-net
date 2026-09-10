@@ -2,16 +2,12 @@
 
 import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowRight, CheckCircle2, LockKeyhole, Mail, Phone } from 'lucide-react'
+import { ArrowRight, CheckCircle2, LockKeyhole } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 /**
- * Phone OTP for members, magic link for owner/admin. No passwords — these
- * users will forget them, and every reset is a support call for Suhail.
- *
- * The phone flow completes here: Supabase sends the code, the user types it
- * back, and `verifyOtp` exchanges it for a session. The magic-link flow
- * finishes in the email client, so this screen just tells them to go look.
+ * Early launch sign-in uses email and password. The owner creates accounts
+ * for the team; OTP and invitation flows can be added after launch.
  */
 export default function LoginPage() {
   return (
@@ -26,109 +22,28 @@ function LoginForm() {
   const params = useSearchParams()
   const next = params.get('next') || '/dashboard'
 
-  const [mode, setMode] = useState<'phone' | 'email'>('phone')
-  const [value, setValue] = useState('')
-  const [sent, setSent] = useState(false)
-  const [code, setCode] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  async function sendCode(event: React.FormEvent) {
+  async function signIn(event: React.FormEvent) {
     event.preventDefault()
     setBusy(true)
     setError(null)
 
     const supabase = createClient()
-    const { error } =
-      mode === 'phone'
-        ? await supabase.auth.signInWithOtp({ phone: normalisePhone(value) })
-        : await supabase.auth.signInWithOtp({
-            email: value.trim(),
-            options: {
-              emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-            },
-          })
-
-    if (error) setError(error.message)
-    else setSent(true)
-    setBusy(false)
-  }
-
-  async function verifyCode(event: React.FormEvent) {
-    event.preventDefault()
-    setBusy(true)
-    setError(null)
-
-    const supabase = createClient()
-    const { error } = await supabase.auth.verifyOtp({
-      phone: normalisePhone(value),
-      token: code,
-      type: 'sms',
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
     })
 
-    if (error) {
-      setError(error.message)
-      setBusy(false)
-      return
+    if (error) setError(error.message)
+    else {
+      router.replace(next)
+      router.refresh()
     }
-
-    // refresh() so the server components re-run with the new auth cookie.
-    router.replace(next)
-    router.refresh()
-  }
-
-  if (sent) {
-    return (
-      <Shell>
-        <div className="auth-success">
-          <CheckCircle2 size={24} />
-        </div>
-        <p className="eyebrow">Almost there</p>
-        <h1>Check your {mode === 'phone' ? 'phone' : 'email'}</h1>
-        <p className="auth-description">
-          {mode === 'phone'
-            ? `We sent a 6-digit code to ${value}.`
-            : `We sent a sign-in link to ${value}. Open it on this device.`}
-        </p>
-
-        {mode === 'phone' && (
-          <form onSubmit={verifyCode} className="auth-form">
-            <input
-              autoFocus
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              placeholder="······"
-              aria-label="6-digit sign-in code"
-              className="auth-input otp-input"
-            />
-            {error && <p className="auth-error">{error}</p>}
-            <button
-              type="submit"
-              disabled={code.length !== 6 || busy}
-              className="primary-button auth-submit"
-            >
-              {busy ? 'Checking…' : <>Verify code <ArrowRight size={16} /></>}
-            </button>
-          </form>
-        )}
-
-        {mode === 'email' && error && <p className="auth-error">{error}</p>}
-
-        <button
-          onClick={() => {
-            setSent(false)
-            setCode('')
-            setError(null)
-          }}
-          className="auth-text-button"
-        >
-          Use a different {mode === 'phone' ? 'number' : 'address'}
-        </button>
-      </Shell>
-    )
+    setBusy(false)
   }
 
   return (
@@ -137,74 +52,39 @@ function LoginForm() {
       <h1>Sign in to SiteKhata</h1>
       <p className="auth-description">Access the Gokulesh Group site expense ledger.</p>
 
-      <div className="auth-tabs">
-        {(['phone', 'email'] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => {
-              setMode(m)
-              setValue('')
-              setError(null)
-            }}
-            className={mode === m ? 'is-active' : ''}
-          >
-            {m === 'phone' ? (
-              <>
-                <Phone size={14} />
-                Phone
-              </>
-            ) : (
-              <>
-                <Mail size={14} />
-                Email
-              </>
-            )}
-          </button>
-        ))}
-      </div>
-
-      <form onSubmit={sendCode} className="auth-form">
+      <form onSubmit={signIn} className="auth-form">
         <label htmlFor="login-identifier">
-          {mode === 'phone' ? 'Mobile number' : 'Email address'}
+          Email address
         </label>
         <input
           id="login-identifier"
           autoFocus
-          type={mode === 'phone' ? 'tel' : 'email'}
-          inputMode={mode === 'phone' ? 'numeric' : 'email'}
-          autoComplete={mode === 'phone' ? 'tel' : 'email'}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={mode === 'phone' ? '98765 43210' : 'you@example.com'}
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          className="auth-input"
+        />
+        <label htmlFor="login-password">Password</label>
+        <input
+          id="login-password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
         />
         {error && <p className="auth-error">{error}</p>}
-        <button type="submit" disabled={!value || busy} className="primary-button auth-submit">
-          {busy ? (
-            'Sending…'
-          ) : mode === 'phone' ? (
-            <>
-              Send code <ArrowRight size={16} />
-            </>
-          ) : (
-            <>
-              Send sign-in link <ArrowRight size={16} />
-            </>
-          )}
+        <button type="submit" disabled={!email || !password || busy} className="primary-button auth-submit">
+          {busy ? 'Signing in…' : <>Sign in <ArrowRight size={16} /></>}
         </button>
       </form>
       <p className="auth-security">
-        <LockKeyhole size={13} /> Secure sign-in. No password required.
+        <LockKeyhole size={13} /> Use the account created by your site owner.
       </p>
     </Shell>
   )
-}
-
-/** Supabase wants E.164; the client will type a local 10-digit number. */
-function normalisePhone(input: string): string {
-  const digits = input.replace(/\D/g, '')
-  if (digits.length === 10) return `+91${digits}`
-  return `+${digits}`
 }
 
 function Shell({ children }: { children: React.ReactNode }) {

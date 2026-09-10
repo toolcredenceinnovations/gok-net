@@ -2,46 +2,52 @@ import 'server-only'
 
 import { cache } from 'react'
 import { redirect } from 'next/navigation'
-import { can, type Capability } from '@sitekhata/shared'
+import { can, type Capability, type Role } from '@sitekhata/shared'
 import { createClient } from '@/lib/supabase/server'
 import type { AppSession, Membership } from './types'
 
 export type { AppSession, Membership } from './types'
 
-/**
- * AUTH REMOVED (temporary).
- *
- * The auth service backend is being rebuilt from scratch, so there is no
- * real login anymore: every request is treated as this fixed Owner identity,
- * on whichever site exists in the database (seeded once, see
- * supabase/migrations/20260911000100_dev_identity_seed.sql).
- *
- * Still the one place the app answers "who is this, and what site are they
- * on?" — when real auth comes back, only this function needs to change.
- */
-const DEV_USER_ID = '00000000-0000-0000-0000-000000000001'
-
 export const getSession = cache(async (): Promise<AppSession | null> => {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
 
-  const [{ data: profile }, { data: site }] = await Promise.all([
-    supabase.from('user_profiles').select('id, name, phone').eq('id', DEV_USER_ID).single(),
-    supabase.from('sites').select('id, name').order('created_at').limit(1).single(),
-  ])
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('id, name, phone, active_site_id')
+    .eq('id', user.id)
+    .single()
+  if (!profile) return null
 
-  if (!profile || !site) return null
+  const { data: memberships } = await supabase
+    .from('user_sites')
+    .select('site_id, role, sites(id, name)')
+    .eq('user_id', user.id)
+  if (!memberships?.length) return null
 
-  const membership: Membership = { siteId: site.id, siteName: site.name, role: 'owner' }
+  const current =
+    memberships.find((membership) => membership.site_id === profile.active_site_id) ?? memberships[0]
+  const site = Array.isArray(current.sites) ? current.sites[0] : current.sites
+  if (!site) return null
+
+  const currentRole = current.role as Role
+  const membership: Membership = { siteId: site.id, siteName: site.name, role: currentRole }
 
   return {
     userId: profile.id,
     name: profile.name,
-    email: null,
+    email: user.email ?? null,
     phone: profile.phone ?? null,
     siteId: site.id,
     siteName: site.name,
-    role: 'owner',
-    memberships: [membership],
+    role: currentRole,
+    memberships: memberships.flatMap((item) => {
+      const itemSite = Array.isArray(item.sites) ? item.sites[0] : item.sites
+      return itemSite
+        ? [{ siteId: itemSite.id, siteName: itemSite.name, role: item.role as Role }]
+        : []
+    }),
   }
 })
 

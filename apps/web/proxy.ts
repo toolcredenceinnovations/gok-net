@@ -1,13 +1,12 @@
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import type { Database } from '@sitekhata/shared/types/database'
 
 /**
  * Next 16 renamed `middleware.ts` to `proxy.ts`; same runtime, same config.
  *
- * AUTH REMOVED (temporary): the Supabase-session gate on (app)/* routes is
- * stripped out while the auth service backend is rebuilt from scratch.
- * `lib/auth/session.ts` hands out a fixed mock session instead, so every
- * route below is effectively open. `/operator/*` is unrelated to user auth
- * (env-secret guarded, not a database role) and keeps its own gate.
+ * User routes require a valid Supabase session. `/operator/*` is unrelated
+ * to user auth and keeps its own environment-secret gate.
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -25,7 +24,27 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  return NextResponse.next()
+  const response = NextResponse.next({ request })
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
+  const { data: { user } } = await supabase.auth.getUser()
+  const publicPath = pathname === '/login' || pathname.startsWith('/auth/')
+  if (!user && !publicPath) return NextResponse.redirect(new URL('/login', request.url))
+
+  return response
 }
 
 /** Constant-time compare, so the secret can't be recovered by timing. */

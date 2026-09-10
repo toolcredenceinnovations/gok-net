@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Role, TeamInviteInput } from '@sitekhata/shared'
+import type { Role, TeamInviteInput, TeamMemberCreateInput } from '@sitekhata/shared'
 import { createClient } from '@/lib/supabase/client'
 import { unwrap } from '@/lib/errors'
 import { queryKeys } from './keys'
@@ -86,7 +86,7 @@ export function useInviteMember() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (input: TeamInviteInput) => {
+    mutationFn: async (input: TeamInviteInput | TeamMemberCreateInput) => {
       return teamRequest('POST', input) as Promise<
         | { kind: 'member'; name: string; role: Role }
         | { kind: 'invitation'; invitation: TeamInvitation }
