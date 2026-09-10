@@ -74,7 +74,7 @@ Derived status: `Unpaid` (₹0 paid) → `Partly paid` → `Paid` (fully settled
 **Categories**
 - Fixed four: Admin, Civil, Marketing, Others
 - Subcategories are Owner-managed, unlimited, per category
-- Subcategories can be archived but never deleted — old entries keep their history
+- Subcategories can be marked inactive, archived, or deleted — the database blocks deleting one still referenced by an expense, so old entries in use keep their history
 
 **Void (not delete)**
 - Nothing is ever hard-deleted. "Delete" marks the entry void, requires the PIN and a mandatory reason
@@ -141,7 +141,7 @@ Same plus:
 sites            id, name, address, created_at
 users            id, name, phone, email, role, site_id, active
 categories       id, name, is_system            -- the fixed four
-subcategories    id, category_id, name, archived
+subcategories    id, category_id, name, archived_at, inactive_at
 vendors          id, site_id, name, phone, gstin, notes, archived
 expenses         id, site_id, date, description, amount,
                  category_id, subcategory_id, vendor_id,

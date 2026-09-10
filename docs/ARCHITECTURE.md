@@ -5,13 +5,14 @@
 | Layer | Choice | Reason |
 |---|---|---|
 | Web framework | Next.js 16 (App Router) + TypeScript | Consistent with FinDesk; SSR for fast dashboard load |
-| UI components | shadcn/ui + Tailwind CSS | Same as FinDesk; unstyled components we control fully |
+| Web UI | shadcn/ui + Tailwind CSS | Accessible web primitives composed in the Next.js app |
+| Mobile UI | Expo UI | Native UI primitives for the Expo app on iOS and Android |
 | Forms | react-hook-form + zod | Type-safe validation, matches schema |
 | Data fetching | TanStack Query (React Query) | Caching, refetch on window focus, loading/error states |
 | Charts | Recharts | Lightest option; good enough for donut + bar charts |
 | Backend | Supabase | Postgres + Auth + Storage + RLS + Edge Functions — one service |
 | Hosting (web) | Vercel | Free tier, GitHub auto-deploy, env var management |
-| Mobile | Expo (React Native) | One codebase → iOS + Android; shares types with web |
+| Mobile framework | Expo (React Native) | One codebase → iOS + Android; shares non-UI logic with web |
 | Analytics | PostHog | Free at this scale, session replay included |
 | Error tracking | Sentry | Free, React + Expo SDKs, stack traces |
 

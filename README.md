@@ -23,8 +23,10 @@ docs/                the specs. Read ARCHITECTURE → DATABASE → AUTH → CONV
 
 ## Stack
 
-Next.js 16 + TypeScript → shadcn/ui + Tailwind → Supabase (Postgres + Auth + Storage + RLS)
-→ Vercel → Expo (mobile). PostHog for usage, Sentry for errors.
+Web: Next.js 16 + TypeScript + shadcn/ui + Tailwind CSS. Mobile: Expo + Expo UI. Both clients
+share platform-neutral types, validation, and business logic through `packages/shared`, with
+Supabase providing Postgres, Auth, Storage, and RLS. PostHog handles usage analytics and Sentry
+handles error tracking.
 
 ---
 

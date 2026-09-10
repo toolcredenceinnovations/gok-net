@@ -100,3 +100,45 @@ export const subcategorySchema = z.object({
   category_id: uuid,
   name: z.string().trim().min(1, 'Subcategory needs a name').max(100),
 })
+export type SubcategoryInput = z.infer<typeof subcategorySchema>
+
+/**
+ * Adding a member to a site by phone. There is no email-invite flow — auth
+ * is phone OTP only, so the phone number must already belong to a
+ * SiteKhata account before an owner can add it to their site.
+ */
+export const teamInviteSchema = z.object({
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[+]?[\d\s-]{7,15}$/, 'Enter a valid phone number'),
+  role: z.enum(['admin', 'member', 'viewer']),
+})
+export type TeamInviteInput = z.infer<typeof teamInviteSchema>
+
+export const teamRoleChangeSchema = z.object({
+  userId: uuid,
+  role: z.enum(ROLES),
+})
+
+export const teamMemberRemoveSchema = z.object({ userId: uuid })
+export const teamInvitationActionSchema = z.object({ invitationId: uuid })
+
+export const HELP_REQUEST_CATEGORIES = ['question', 'bug', 'feature_request', 'other'] as const
+export const HELP_REQUEST_CATEGORY_LABEL: Record<(typeof HELP_REQUEST_CATEGORIES)[number], string> =
+  {
+    question: 'General question',
+    bug: 'Something is broken',
+    feature_request: 'Feature request',
+    other: 'Other',
+  }
+
+/** The Help & support form in the sidebar footer. Sent by email, not stored. */
+export const helpRequestSchema = z.object({
+  name: z.string().trim().min(1, 'Tell us your name').max(200),
+  email: z.string().trim().email('Enter a valid email').max(320),
+  category: z.enum(HELP_REQUEST_CATEGORIES),
+  subject: z.string().trim().min(3, 'Give it a short subject').max(200),
+  message: z.string().trim().min(10, 'Say a bit more about it').max(4000),
+})
+export type HelpRequestInput = z.infer<typeof helpRequestSchema>

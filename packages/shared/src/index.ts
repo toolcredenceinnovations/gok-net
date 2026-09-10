@@ -1,4 +1,5 @@
 export * from './utils/format'
 export * from './utils/status'
+export * from './utils/permissions'
 export * from './validation/schemas'
 export type { Database } from './types/database'

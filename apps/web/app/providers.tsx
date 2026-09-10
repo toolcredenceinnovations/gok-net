@@ -4,6 +4,7 @@ import { useState, useEffect, type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
+import { Toaster } from 'sonner'
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -28,7 +29,9 @@ export function Providers({ children }: { children: ReactNode }) {
       capture_pageview: true,
       // Session replay from day one — when someone says "the app is
       // confusing", watch the recording instead of guessing.
-      session_recording: { maskAllInputs: false },
+      // Inputs ARE masked: this app's inputs are money, vendor names and the
+      // action PIN. A replay must never carry the PIN.
+      session_recording: { maskAllInputs: true },
       loaded: (ph) => {
         if (process.env.NEXT_PUBLIC_APP_ENV !== 'production') ph.opt_out_capturing()
       },
@@ -37,7 +40,16 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <PostHogProvider client={posthog}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {children}
+        {/* CONVENTIONS.md: never let a failed write fail silently. */}
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          toastOptions={{ duration: 4000 }}
+        />
+      </QueryClientProvider>
     </PostHogProvider>
   )
 }

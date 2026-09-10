@@ -6,10 +6,11 @@ import type { Database } from '@sitekhata/shared/types/database'
 /**
  * Service-role client. BYPASSES RLS — every guard in the database is off.
  *
- * Only two things may use it:
+ * Only privileged server paths may use it:
  *   1. the /operator panel, which is meant to see across everything
  *   2. the PIN-gated payment/void path, which is the only way those writes
  *      can happen at all (payments has no insert policy for authenticated)
+ *   3. the owner-gated team API, for finding and inviting users outside RLS
  *
  * The `server-only` import above makes the build fail if this is ever
  * imported into a client component.

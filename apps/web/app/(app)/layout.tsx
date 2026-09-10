@@ -1,39 +1,42 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import { getSession } from '@/lib/auth/session'
+import { SessionProvider } from '@/lib/auth/session-context'
+import { AppShell } from '@/components/shared/app-shell'
 
 /**
- * Every route under (app) is signed-in only. The middleware already redirects
- * anonymous traffic; this is the second layer, and it also resolves the
- * active site so children don't each have to.
+ * Every route under (app) is signed-in only. `proxy.ts` already redirects
+ * anonymous traffic; this is the second layer, and it resolves the session
+ * once so no child has to.
+ *
+ * The session is cached per request, so pages below can call getSession()
+ * again for free.
  */
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
+  const session = await getSession()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('id, name, active_site_id')
-    .eq('id', user.id)
-    .single()
-
-  // A user with no site yet cannot do anything useful. The Owner assigns
-  // membership in Settings → Users.
-  if (!profile?.active_site_id) {
+  // A user with no site membership cannot do anything useful. The Owner
+  // assigns membership in Settings → Team.
+  if (!session) {
     return (
-      <main className="flex min-h-dvh items-center justify-center p-6 text-center">
-        <div>
-          <h1 className="text-lg font-semibold">You are not on a site yet</h1>
-          <p className="mt-2 text-neutral-600">
-            Ask the owner to add you, then sign in again.
+      <main className="product-page state-page">
+        <div className="system-state">
+          <p className="eyebrow">No site yet</p>
+          <h1>You are not on a site yet</h1>
+          <p>
+            Ask the owner to add you to a site, then sign in again. If you have just
+            been added, sign out and back in to pick up the change.
           </p>
+          <Link className="primary-button" href="/login">
+            Back to sign in
+          </Link>
         </div>
       </main>
     )
   }
 
-  return <div className="min-h-dvh">{children}</div>
+  return (
+    <SessionProvider session={session}>
+      <AppShell>{children}</AppShell>
+    </SessionProvider>
+  )
 }

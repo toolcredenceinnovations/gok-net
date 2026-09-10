@@ -22,7 +22,7 @@ create index expenses_due_date_idx       on expenses (site_id, due_date) where d
 -- vendor + amount + date duplicate detection
 create index expenses_dupe_check_idx     on expenses (site_id, vendor_id, date, amount);
 -- description search
-create index expenses_description_trgm_idx on expenses using gin (description gin_trgm_ops);
+create index expenses_description_trgm_idx on expenses using gin (description extensions.gin_trgm_ops);
 
 create index payments_expense_idx        on payments (expense_id);
 create index payments_paid_by_idx        on payments (paid_by);       -- settlement view
@@ -38,7 +38,7 @@ create index audit_log_actor_idx         on audit_log (actor_id, created_at desc
 create index audit_log_action_idx        on audit_log (site_id, action, created_at desc);
 
 create index vendors_site_idx            on vendors (site_id);
-create index vendors_name_trgm_idx       on vendors using gin (name gin_trgm_ops);  -- vendor search
+create index vendors_name_trgm_idx       on vendors using gin (name extensions.gin_trgm_ops);  -- vendor search
 
 create index subcategories_site_cat_idx  on subcategories (site_id, category_id);
 create index user_sites_site_idx         on user_sites (site_id);

@@ -79,6 +79,7 @@ $$;
 create or replace function touch_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   NEW.updated_at := now();
@@ -273,6 +274,7 @@ for each row execute function write_audit_log();
 create or replace function block_audit_modification()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   raise exception 'audit_log is append-only; % is not permitted', TG_OP;

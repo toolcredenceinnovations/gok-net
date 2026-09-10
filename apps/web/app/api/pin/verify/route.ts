@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getSession } from '@/lib/auth/session'
 import { paymentSchema, voidSchema } from '@sitekhata/shared'
 
 /**
@@ -10,31 +10,27 @@ import { paymentSchema, voidSchema } from '@sitekhata/shared'
  * It deliberately does not mint an "action token" for the client to spend —
  * that pattern is only as strong as the client honouring it. Here the write
  * is impossible without a correct PIN, because `payments` grants no insert to
- * `authenticated` and the void columns on `expenses` are not in that role's
- * column grants. The service role below is the only way through, and it is
- * only reached after bcrypt.compare succeeds.
+ * `anon`/`authenticated` and the void columns on `expenses` are not in that
+ * role's column grants. The service role below is the only way through, and
+ * it is only reached after bcrypt.compare succeeds.
  *
  * Layered per SCOPE.md §1: role gate first, PIN second, audit trail third.
+ * AUTH REMOVED (temporary): "session" is the fixed identity from
+ * lib/auth/session.ts, not a real login — this gate still holds regardless.
  */
 export async function POST(request: Request) {
-  const supabase = await createClient()
-
   // ── 1. session ───────────────────────────────────────────────────────────
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Not signed in' }, { status: 401 })
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: 'Not signed in' }, { status: 401 })
+  const user = { id: session.userId }
 
   // ── 2. role gate — only owner/admin may even attempt this ────────────────
-  const [{ data: role }, { data: siteId }] = await Promise.all([
-    supabase.rpc('current_user_role'),
-    supabase.rpc('current_user_site_id'),
-  ])
+  const role = session.role
+  const siteId = session.siteId
 
   if (role !== 'owner' && role !== 'admin') {
     return NextResponse.json({ error: 'You do not have permission for this' }, { status: 403 })
   }
-  if (!siteId) return NextResponse.json({ error: 'No active site' }, { status: 400 })
 
   const { action, pin, payload } = await request.json()
   if (typeof pin !== 'string' || !/^\d{6}$/.test(pin)) {
@@ -82,7 +78,7 @@ export async function POST(request: Request) {
         // Confirm the target expense really belongs to the caller's site.
         const { data: expense } = await admin
           .from('expenses')
-          .select('id, site_id, voided_at')
+          .select('id, site_id, amount, voided_at')
           .eq('id', parsed.data.expense_id)
           .single()
 
@@ -91,6 +87,33 @@ export async function POST(request: Request) {
         }
         if (expense.voided_at) {
           return NextResponse.json({ error: 'That entry is voided' }, { status: 409 })
+        }
+
+        const [{ data: payer }, { data: existingPayments }] = await Promise.all([
+          admin
+            .from('user_sites')
+            .select('user_id, user_profiles!inner(active)')
+            .eq('site_id', siteId)
+            .eq('user_id', parsed.data.paid_by)
+            .eq('user_profiles.active', true)
+            .maybeSingle(),
+          admin.from('payments').select('amount').eq('expense_id', expense.id).is('voided_at', null),
+        ])
+
+        if (!payer) {
+          return NextResponse.json({ error: 'The selected payer is not an active site member' }, { status: 400 })
+        }
+
+        const totalPaid = (existingPayments ?? []).reduce((sum, payment) => sum + Number(payment.amount), 0)
+        const outstanding = Math.max(0, Number(expense.amount) - totalPaid)
+        if (outstanding <= 0) {
+          return NextResponse.json({ error: 'That expense is already fully paid' }, { status: 409 })
+        }
+        if (parsed.data.amount > outstanding) {
+          return NextResponse.json(
+            { error: `Payment cannot exceed the outstanding balance of ₹${outstanding.toLocaleString('en-IN')}` },
+            { status: 409 }
+          )
         }
 
         const { data, error } = await admin
@@ -147,6 +170,16 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Which payment?' }, { status: 400 })
         }
 
+        const { data: target } = await admin
+          .from('payments')
+          .select('id, expense_id, expenses!inner(site_id)')
+          .eq('id', id)
+          .eq('expenses.site_id', siteId)
+          .is('voided_at', null)
+          .maybeSingle()
+
+        if (!target) return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
+
         const { data, error } = await admin
           .from('payments')
           .update({
@@ -160,6 +193,7 @@ export async function POST(request: Request) {
           .single()
 
         if (error) throw error
+        if (!data) return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
         return NextResponse.json({ data })
       }
 

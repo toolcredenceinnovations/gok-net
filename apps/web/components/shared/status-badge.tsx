@@ -1,5 +1,5 @@
 import { STATUS_LABEL, type ExpenseStatus } from '@sitekhata/shared'
-import { cn } from '@/lib/utils/cn'
+import { cn } from '@/lib/utils'
 
 /**
  * Design principle 5: colour carries status, but never colour alone — the

@@ -3,8 +3,8 @@ import './globals.css'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: 'SiteKhata',
-  description: 'Shared expense ledger for construction sites',
+  title: 'SiteKhata — Gokulesh Group',
+  description: 'Construction expense control for Gokulesh Group',
 }
 
 export const viewport: Viewport = {
@@ -12,7 +12,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   // The site engineer is standing, one-handed, in the sun.
   maximumScale: 5,
-  themeColor: '#171717',
+  themeColor: '#f4f3ef',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

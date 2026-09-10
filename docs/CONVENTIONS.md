@@ -83,6 +83,30 @@ apps/web/
 
 ---
 
+## UI platform boundary
+
+Keep UI code platform-specific:
+
+| Target | UI system | Rule |
+|---|---|---|
+| Web (`apps/web`) | shadcn/ui + Tailwind CSS | Add primitives under `components/ui` with the shadcn CLI, then compose them into feature components. |
+| Mobile (`apps/mobile`) | Expo UI | Use universal imports from `@expo/ui` when available; use platform-specific Expo UI imports only when a native-only feature requires them. |
+
+Do not import shadcn components into the mobile app or Expo UI components into the web app. Only platform-neutral types, validation schemas, formatting, and business rules belong in `packages/shared`.
+
+### Web visual system
+
+- Use a warm neutral application canvas (`#F4F3EF`), off-white navigation (`#ECEBE6`), and white work surfaces. Do not copy reference-product colours.
+- Amber (`#B86724`) is the single product accent, derived from the Gokulesh identity. Reserve it for primary actions, active states, focus, and key chart marks.
+- Use an 8px spacing rhythm. Default work-area gaps are 16–24px; major section gaps are 32px.
+- Surfaces use a 14px radius and a subtle 1px neutral border. Use shadows sparingly and only to clarify elevation.
+- Standard controls are 40–44px tall with a 10px radius. Every interactive state must include more than colour alone.
+- The desktop shell is persistent side navigation + a sticky top bar + one bounded work area. On small screens, collapse the side navigation before compressing content.
+- Use dedicated full-page workspaces for create and edit flows. Do not place multi-section CRUD forms in overlay dialogs.
+- Keep money visually dominant, status textual, and secondary metadata quiet. Continue using `AmountDisplay` and `StatusBadge` everywhere.
+
+---
+
 ## Amount formatting
 
 Always use `formatAmount()`. Never format money inline.

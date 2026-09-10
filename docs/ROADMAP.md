@@ -4,23 +4,30 @@
 
 Get the infrastructure in place before writing a single feature screen.
 
-- [ ] Create Supabase project
-- [ ] Run schema migrations (see `DATABASE.md`)
-- [ ] Seed categories (Admin, Civil, Marketing, Others)
-- [ ] Set up Supabase Auth — enable Phone OTP + Magic Link
-- [ ] Create Supabase Storage bucket (`attachments`, private)
-- [ ] Set up Next.js 14 project with TypeScript + Turborepo monorepo
-- [ ] Install and configure shadcn/ui + Tailwind
-- [ ] Wire up Supabase client (browser + server + middleware)
-- [ ] Generate TypeScript types from schema
-- [ ] Set up environment variables (local + Vercel)
+- [x] Create Supabase project
+- [x] Run schema migrations (see `DATABASE.md`)
+- [x] Seed categories (Admin, Civil, Marketing, Others)
+- [ ] Set up Supabase Auth — enable Phone OTP + Magic Link *(dashboard config; both client flows are built)*
+- [x] Create Supabase Storage bucket (`attachments`, private)
+- [x] Set up Next.js project with TypeScript + Turborepo monorepo (Next **16**, see `DECISIONS.md`)
+- [x] Install and configure shadcn/ui + Tailwind
+- [x] Wire up Supabase client (browser + server + proxy — `middleware.ts` is `proxy.ts` in Next 16)
+- [x] Generate TypeScript types from schema
+- [ ] Set up environment variables *(local done; Vercel outstanding)*
 - [ ] Connect domain `sitekhata.credenceinnovations.com` to Vercel
-- [ ] Install and configure PostHog (init + identify)
-- [ ] Install and configure Sentry (Next.js wizard)
+- [x] Install and configure PostHog (init + identify)
+- [x] Install and configure Sentry (Next.js wizard)
 - [ ] Set up GitHub repo + Vercel auto-deploy on push to `main`
-- [ ] Connect MCPs: Supabase, Figma, GitHub, Vercel
+- [x] Connect MCPs: Supabase, Figma, GitHub, Vercel
 
 **Done when:** You can push code, it deploys automatically, PostHog sees a pageview, Sentry is wired.
+
+> **Status, 1 Sep 2026.** Migrations are applied to `eqofdedstkagqkfnksac` (11 tables,
+> 28 RLS policies, 5 views, 41 indexes, 10 triggers, private `attachments` bucket) and the
+> grant-level security invariants are verified against the live database. Types are
+> regenerated. Sentry and toasts are wired. The data-access layer (`lib/hooks/`,
+> `lib/auth/session.ts`) exists and the app shell reads the real session. What is NOT done is
+> Phase 1: the feature screens still render mock data — see `components/product/product-screens.tsx`.
 
 ---
 

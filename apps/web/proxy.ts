@@ -1,13 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
 
 /**
- * Two separate gates:
- *   /operator/*  — the Dev layer. Guarded by OPERATOR_SECRET, an env var, not
- *                  a database role. Invisible to the 4–6 real users.
- *   everything else under (app) — needs a Supabase session.
+ * Next 16 renamed `middleware.ts` to `proxy.ts`; same runtime, same config.
+ *
+ * AUTH REMOVED (temporary): the Supabase-session gate on (app)/* routes is
+ * stripped out while the auth service backend is rebuilt from scratch.
+ * `lib/auth/session.ts` hands out a fixed mock session instead, so every
+ * route below is effectively open. `/operator/*` is unrelated to user auth
+ * (env-secret guarded, not a database role) and keeps its own gate.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/operator')) {
@@ -23,19 +25,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const { response, user } = await updateSession(request)
-
-  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/verify')) {
-    const redirect = new URL('/login', request.url)
-    redirect.searchParams.set('next', pathname)
-    return NextResponse.redirect(redirect)
-  }
-
-  if (user && (pathname === '/login' || pathname === '/')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  return response
+  return NextResponse.next()
 }
 
 /** Constant-time compare, so the secret can't be recovered by timing. */

@@ -1,5 +1,5 @@
 import { formatAmount, formatLakh } from '@sitekhata/shared'
-import { cn } from '@/lib/utils/cn'
+import { cn } from '@/lib/utils'
 
 /**
  * Design principle 4: money is big. Everything else is secondary.
