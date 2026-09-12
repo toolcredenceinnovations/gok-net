@@ -5,7 +5,7 @@ import {
   teamInviteSchema,
   teamMemberRemoveSchema,
   teamRoleChangeSchema,
-} from '@sitekhata/shared'
+} from '@gok-net/shared'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getSession } from '@/lib/auth/session'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, type ReactNode } from 'react'
-import { can, type Capability } from '@sitekhata/shared'
+import { can, type Capability } from '@gok-net/shared'
 import type { AppSession } from './types'
 
 /**

@@ -136,7 +136,7 @@ npx @sentry/wizard@latest -i expo
 
 A protected Next.js route. Accessible only with the `OPERATOR_SECRET` env var. Not linked from any user-facing nav.
 
-URL: `sitekhata.credenceinnovations.com/operator`
+URL: `gok-net.credenceinnovations.com/operator`
 
 ---
 

@@ -26,10 +26,10 @@
       "@/*": [
         "./*"
       ],
-      "@sitekhata/shared": [
+      "@gok-net/shared": [
         "../../packages/shared/src/index.ts"
       ],
-      "@sitekhata/shared/*": [
+      "@gok-net/shared/*": [
         "../../packages/shared/src/*"
       ]
     }

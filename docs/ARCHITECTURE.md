@@ -20,13 +20,13 @@
 
 ## Hosting
 
-**Domain:** `sitekhata.credenceinnovations.com`
+**Domain:** `gok-net.credenceinnovations.com`
 
 DNS setup:
 1. In your domain registrar (wherever credenceinnovations.co is hosted), add a CNAME record:
-   - Name: `sitekhata`
+   - Name: `gok-net`
    - Value: `cname.vercel-dns.com`
-2. In Vercel project settings → Domains → add `sitekhata.credenceinnovations.com`
+2. In Vercel project settings → Domains → add `gok-net.credenceinnovations.com`
 3. Vercel handles SSL automatically
 
 **Cost while it's one client:** ₹0/month
@@ -42,7 +42,7 @@ Upgrade to Supabase Pro ($25/month) only when adding a second paying client.
 ## Repository structure
 
 ```
-sitekhata/
+gok-net/
 ├── apps/
 │   ├── web/                    # Next.js app
 │   │   ├── app/                # App Router pages

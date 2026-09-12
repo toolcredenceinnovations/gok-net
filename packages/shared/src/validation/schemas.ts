@@ -107,7 +107,7 @@ export type SubcategoryInput = z.infer<typeof subcategorySchema>
 /**
  * Adding a member to a site by phone. There is no email-invite flow — auth
  * is phone OTP only, so the phone number must already belong to a
- * SiteKhata account before an owner can add it to their site.
+ * GOK-NET account before an owner can add it to their site.
  */
 export const teamInviteSchema = z.object({
   phone: z

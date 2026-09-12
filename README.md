@@ -1,4 +1,4 @@
-# SiteKhata
+# GOK-NET
 
 A shared expense ledger for construction sites. Log what was spent, who paid, and whether it's
 cleared. The owner sees where the money went — by month, by category, by vendor.

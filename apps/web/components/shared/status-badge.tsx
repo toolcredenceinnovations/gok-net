@@ -1,4 +1,4 @@
-import { STATUS_LABEL, type ExpenseStatus } from '@sitekhata/shared'
+import { STATUS_LABEL, type ExpenseStatus } from '@gok-net/shared'
 import { cn } from '@/lib/utils'
 
 /**

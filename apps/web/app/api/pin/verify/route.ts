@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getSession } from '@/lib/auth/session'
-import { paymentSchema, voidSchema } from '@sitekhata/shared'
+import { paymentSchema, voidSchema } from '@gok-net/shared'
 
 /**
  * The PIN gate. This route both VERIFIES the PIN and PERFORMS the write.

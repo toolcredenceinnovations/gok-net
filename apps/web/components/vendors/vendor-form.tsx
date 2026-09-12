@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Building2, Save, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { vendorSchema, type VendorInput } from '@sitekhata/shared'
+import { vendorSchema, type VendorInput } from '@gok-net/shared'
 import { useCreateVendor, useUpdateVendor, type Vendor } from '@/lib/hooks/use-vendors'
 import { friendlyMessage, reportError } from '@/lib/errors'
 

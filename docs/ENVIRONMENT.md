@@ -34,11 +34,11 @@ NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 # ─── Sentry ─────────────────────────────────────────────
 NEXT_PUBLIC_SENTRY_DSN=https://xxxx@oxxxx.ingest.sentry.io/xxxx
 SENTRY_ORG=your-sentry-org
-SENTRY_PROJECT=sitekhata-web
+SENTRY_PROJECT=gok-net-web
 SENTRY_AUTH_TOKEN=sntrys_xxxx                         # for source map uploads only
 
 # ─── App config ─────────────────────────────────────────
-NEXT_PUBLIC_APP_URL=https://sitekhata.credenceinnovations.com
+NEXT_PUBLIC_APP_URL=https://gok-net.credenceinnovations.com
 NEXT_PUBLIC_APP_ENV=production                        # development | staging | production
 ```
 

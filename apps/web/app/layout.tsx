@@ -3,7 +3,7 @@ import './globals.css'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: 'SiteKhata — Gokulesh Group',
+  title: 'GOK-NET — Gokulesh Group',
   description: 'Construction expense control for Gokulesh Group',
 }
 

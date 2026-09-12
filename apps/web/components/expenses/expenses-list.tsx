@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ArrowRight, Calendar, Clock3, Plus, ReceiptText, Search, WalletCards, X } from 'lucide-react'
-import { formatDate, type ExpenseStatus } from '@sitekhata/shared'
+import { formatDate, type ExpenseStatus } from '@gok-net/shared'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { useExpenses } from '@/lib/hooks/use-expenses'

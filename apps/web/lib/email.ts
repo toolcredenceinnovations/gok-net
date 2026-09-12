@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { HelpRequestInput } from '@sitekhata/shared'
+import type { HelpRequestInput } from '@gok-net/shared'
 
 // TODO: switch back to hello@credenceinnovations.co once that domain is
 // verified in Resend (resend.com/domains) — until then the sandbox account
@@ -20,7 +20,7 @@ export async function sendSupportEmail(
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) throw new Error('RESEND_API_KEY is not configured')
 
-  const from = process.env.SUPPORT_FROM_EMAIL ?? 'SiteKhata <onboarding@resend.dev>'
+  const from = process.env.SUPPORT_FROM_EMAIL ?? 'GOK-NET <onboarding@resend.dev>'
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -32,7 +32,7 @@ export async function sendSupportEmail(
       from,
       to: SUPPORT_TO_EMAIL,
       reply_to: input.email,
-      subject: `[SiteKhata support] ${input.subject}`,
+      subject: `[GOK-NET support] ${input.subject}`,
       text: [
         `From: ${input.name} <${input.email}>`,
         `Site: ${input.siteName}`,

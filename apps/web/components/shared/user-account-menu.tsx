@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, LogOut, Settings, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
-import { ROLE_LABEL } from '@sitekhata/shared'
+import { ROLE_LABEL } from '@gok-net/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { createClient } from '@/lib/supabase/client'
 

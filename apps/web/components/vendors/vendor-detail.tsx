@@ -12,7 +12,7 @@ import {
   ReceiptText,
   RotateCcw,
 } from 'lucide-react'
-import { formatDate } from '@sitekhata/shared'
+import { formatDate } from '@gok-net/shared'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { useArchiveVendor, useVendor, useVendorTotals } from '@/lib/hooks/use-vendors'

@@ -1,7 +1,7 @@
 'use client'
 
 import { createBrowserClient } from '@supabase/ssr'
-import type { Database } from '@sitekhata/shared/types/database'
+import type { Database } from '@gok-net/shared/types/database'
 
 /**
  * Browser client. Uses the anon key — RLS is what protects the data.

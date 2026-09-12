@@ -3,7 +3,7 @@
 import { FormEvent, useMemo, useState } from 'react'
 import { Check, CheckCircle2, Eye, EyeOff, KeyRound, LogOut, Mail, Phone, ShieldCheck, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
-import { ROLE_LABEL } from '@sitekhata/shared'
+import { ROLE_LABEL } from '@gok-net/shared'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/auth/session-context'
 import { createClient } from '@/lib/supabase/client'

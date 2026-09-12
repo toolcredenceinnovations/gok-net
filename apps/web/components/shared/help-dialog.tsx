@@ -9,7 +9,7 @@ import {
   HELP_REQUEST_CATEGORY_LABEL,
   helpRequestSchema,
   type HelpRequestInput,
-} from '@sitekhata/shared'
+} from '@gok-net/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { reportError } from '@/lib/errors'
 

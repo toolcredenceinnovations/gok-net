@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import type { Database } from '@sitekhata/shared/types/database'
+import type { Database } from '@gok-net/shared/types/database'
 
 /**
  * Next 16 renamed `middleware.ts` to `proxy.ts`; same runtime, same config.

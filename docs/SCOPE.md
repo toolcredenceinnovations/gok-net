@@ -1,8 +1,8 @@
-# SiteKhata — Scope
+# GOK-NET — Scope
 
 **One line:** A shared expense ledger for a construction site. Anyone on site can log what was spent, who paid, and whether it's cleared. The owner sees where the money went — by month, by category, by vendor.
 
-**Working name:** SiteKhata. Alternatives if that doesn't land: *Nirman Ledger*, *Khata Works*, *SiteBook*.
+**Working name:** GOK-NET. Alternatives if that doesn't land: *Nirman Ledger*, *Khata Works*, *SiteBook*.
 
 **Not:** an accounting package, a GST filing tool, or a project management app. It feeds the CA at year end, it doesn't replace them.
 

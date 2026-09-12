@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — one-time site setup
+-- GOK-NET — one-time site setup
 --
 -- Fill in the five values below and run once against the project. Creates the
 -- site, its Owner membership, a starter set of subcategories, and the action

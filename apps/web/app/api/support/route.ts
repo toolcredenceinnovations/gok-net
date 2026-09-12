@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { helpRequestSchema } from '@sitekhata/shared'
+import { helpRequestSchema } from '@gok-net/shared'
 import { getSession } from '@/lib/auth/session'
 import { sendSupportEmail } from '@/lib/email'
 

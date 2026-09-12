@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — lock down function EXECUTE grants
+-- GOK-NET — lock down function EXECUTE grants
 --
 -- Supabase exposes every function in `public` at /rest/v1/rpc/<name>. Anything
 -- SECURITY DEFINER reachable there runs with the definer's privileges, so the

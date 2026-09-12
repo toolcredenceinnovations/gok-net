@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — extensions
+-- GOK-NET — extensions
 -- ============================================================================
 
 -- Fuzzy search for the vendor picker ("ABC Trad" → "ABC Traders") and for

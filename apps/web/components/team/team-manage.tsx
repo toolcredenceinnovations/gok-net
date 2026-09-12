@@ -13,7 +13,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { ROLE_LABEL, ROLES, capabilitiesFor, formatDate, type Role } from '@sitekhata/shared'
+import { ROLE_LABEL, ROLES, capabilitiesFor, formatDate, type Role } from '@gok-net/shared'
 import {
   useTeam,
   useChangeRole,

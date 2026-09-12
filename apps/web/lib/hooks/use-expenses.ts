@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { ExpenseInput, ExpenseStatus } from '@sitekhata/shared'
+import type { ExpenseInput, ExpenseStatus } from '@gok-net/shared'
 import { createClient } from '@/lib/supabase/client'
 import { useSession } from '@/lib/auth/session-context'
 import { unwrap } from '@/lib/errors'

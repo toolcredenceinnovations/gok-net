@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — private attachment storage
+-- GOK-NET — private attachment storage
 --
 -- Files are never served directly. The bucket is private; the app hands out
 -- short-lived signed URLs. Path convention (first segment is always the site,

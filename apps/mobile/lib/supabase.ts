@@ -2,7 +2,7 @@ import 'react-native-url-polyfill/auto'
 import { createClient } from '@supabase/supabase-js'
 import * as SecureStore from 'expo-secure-store'
 import { Platform } from 'react-native'
-import type { Database } from '@sitekhata/shared/types/database'
+import type { Database } from '@gok-net/shared/types/database'
 
 /**
  * Session lives in expo-secure-store — encrypted on device, not in

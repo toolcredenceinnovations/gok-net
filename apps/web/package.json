@@ -1,5 +1,5 @@
 {
-  "name": "@sitekhata/web",
+  "name": "@gok-net/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
     "@sentry/nextjs": "^10.12.0",
-    "@sitekhata/shared": "*",
+    "@gok-net/shared": "*",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.58.0",
     "@tanstack/react-query": "^5.90.2",

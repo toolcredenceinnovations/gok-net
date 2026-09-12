@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { VendorInput } from '@sitekhata/shared'
+import type { VendorInput } from '@gok-net/shared'
 import { createClient } from '@/lib/supabase/client'
 import { useSession } from '@/lib/auth/session-context'
 import { unwrap } from '@/lib/errors'

@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — the fixed four categories
+-- GOK-NET — the fixed four categories
 --
 -- Global, not site-scoped, and is_system = true so they can never be renamed
 -- or removed by the Owner. Subcategories underneath them are site-scoped and

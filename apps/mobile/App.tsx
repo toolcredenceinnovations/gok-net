@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import type { Session } from '@supabase/supabase-js'
-import { formatAmount, formatLakh, STATUS_LABEL } from '@sitekhata/shared'
+import { formatAmount, formatLakh, STATUS_LABEL } from '@gok-net/shared'
 import { supabase } from './lib/supabase'
 
 /**
@@ -54,7 +54,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>SiteKhata</Text>
+      <Text style={styles.heading}>GOK-NET</Text>
       <Text style={styles.muted}>{sent ? 'Check your phone for the code.' : 'Sign in with your phone.'}</Text>
 
       {!sent && (

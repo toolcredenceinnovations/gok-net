@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { subcategorySchema, type SubcategoryInput } from '@sitekhata/shared'
+import { subcategorySchema, type SubcategoryInput } from '@gok-net/shared'
 import { useCreateSubcategory, type Category } from '@/lib/hooks/use-categories'
 import { friendlyMessage, reportError } from '@/lib/errors'
 

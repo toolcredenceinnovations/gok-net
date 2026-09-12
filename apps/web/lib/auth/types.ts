@@ -1,4 +1,4 @@
-import type { Role } from '@sitekhata/shared'
+import type { Role } from '@gok-net/shared'
 
 /**
  * Session shape, in its own module so client components can import the type

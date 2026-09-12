@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Role, TeamInviteInput, TeamMemberCreateInput } from '@sitekhata/shared'
+import type { Role, TeamInviteInput, TeamMemberCreateInput } from '@gok-net/shared'
 import { createClient } from '@/lib/supabase/client'
 import { unwrap } from '@/lib/errors'
 import { queryKeys } from './keys'

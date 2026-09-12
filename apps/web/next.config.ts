@@ -3,7 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   // packages/shared ships as TypeScript source, not a build step.
-  transpilePackages: ['@sitekhata/shared'],
+  transpilePackages: ['@gok-net/shared'],
 }
 
 export default withSentryConfig(nextConfig, {

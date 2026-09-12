@@ -14,7 +14,7 @@ Get the infrastructure in place before writing a single feature screen.
 - [x] Wire up Supabase client (browser + server + proxy — `middleware.ts` is `proxy.ts` in Next 16)
 - [x] Generate TypeScript types from schema
 - [ ] Set up environment variables *(local done; Vercel outstanding)*
-- [ ] Connect domain `sitekhata.credenceinnovations.com` to Vercel
+- [ ] Connect domain `gok-net.credenceinnovations.com` to Vercel
 - [x] Install and configure PostHog (init + identify)
 - [x] Install and configure Sentry (Next.js wizard)
 - [ ] Set up GitHub repo + Vercel auto-deploy on push to `main`

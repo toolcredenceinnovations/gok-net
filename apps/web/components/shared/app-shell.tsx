@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { BarChart3, Bell, Building2, ChevronDown, ClipboardList, FileClock, HardHat, HelpCircle, Menu, Plus, Search, Settings, Tags, Users, WalletCards } from 'lucide-react'
-import { can, type Capability } from '@sitekhata/shared'
+import { can, type Capability } from '@gok-net/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { HelpDialog } from '@/components/shared/help-dialog'
 import { UserAccountMenu } from '@/components/shared/user-account-menu'
@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className={`sidebar ${navOpen ? 'is-open' : ''}`}>
         <div className="brand-lockup">
           <div className="brand-mark"><img src="/gokulesh-group-logo.svg" alt="" /></div>
-          <div><strong>Gokulesh Group</strong><span>SiteKhata</span></div>
+          <div><strong>Gokulesh Group</strong><span>GOK-NET</span></div>
         </div>
 
         <div className="site-switcher">

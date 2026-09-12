@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cache } from 'react'
 import { redirect } from 'next/navigation'
-import { can, type Capability, type Role } from '@sitekhata/shared'
+import { can, type Capability, type Role } from '@gok-net/shared'
 import { createClient } from '@/lib/supabase/server'
 import type { AppSession, Membership } from './types'
 

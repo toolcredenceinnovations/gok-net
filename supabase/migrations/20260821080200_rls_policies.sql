@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — Row Level Security
+-- GOK-NET — Row Level Security
 --
 -- docs/DATABASE.md enables RLS on nine tables but writes policies for two.
 -- Enabled + no policy = deny all, so this migration is what makes the app

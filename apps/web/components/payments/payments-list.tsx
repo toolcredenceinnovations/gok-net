@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ArrowRight, Check, Clock3, Search, ShieldCheck, X } from 'lucide-react'
-import { formatDate, PAYMENT_MODES } from '@sitekhata/shared'
+import { formatDate, PAYMENT_MODES } from '@gok-net/shared'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { useRecentPayments, type PaymentRow } from '@/lib/hooks/use-payments'
 

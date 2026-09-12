@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — initial schema
+-- GOK-NET — initial schema
 --
 -- Differs from docs/DATABASE.md in three deliberate ways (see the plan, §3.3):
 --   1. Roles live on `user_sites`, not `user_profiles` — a user can hold a

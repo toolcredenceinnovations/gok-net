@@ -1,5 +1,5 @@
 -- ============================================================================
--- SiteKhata — RLS regression test
+-- GOK-NET — RLS regression test
 --
 -- Run against a NON-PRODUCTION database. Creates two sites and three users,
 -- asserts that site A cannot see site B, that the PIN-gated writes are closed

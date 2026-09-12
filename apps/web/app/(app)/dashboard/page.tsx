@@ -9,7 +9,7 @@ import { StatusBadge } from '@/components/shared/status-badge'
 import { useMonthSummary, useSpendTrend } from '@/lib/hooks/use-dashboard'
 import { useExpenses } from '@/lib/hooks/use-expenses'
 import { useSession } from '@/lib/auth/session-context'
-import { formatDate } from '@sitekhata/shared'
+import { formatDate } from '@gok-net/shared'
 
 const CATEGORY_TONES = ['amber', 'charcoal', 'sand', 'pale'] as const
 

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
-import type { Database } from '@sitekhata/shared/types/database'
+import type { Database } from '@gok-net/shared/types/database'
 
 /** Server-component / route-handler client. Still anon key, still RLS-bound. */
 export async function createClient() {

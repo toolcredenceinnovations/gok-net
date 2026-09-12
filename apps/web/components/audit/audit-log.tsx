@@ -15,7 +15,7 @@ import {
   UserPlus,
   type LucideIcon,
 } from 'lucide-react'
-import { formatDate } from '@sitekhata/shared'
+import { formatDate } from '@gok-net/shared'
 import { useAuditLog } from '@/lib/hooks/use-team'
 
 const ACTION_ICON: Record<string, LucideIcon> = {
@@ -102,7 +102,7 @@ export function AuditLog() {
               const isOpen = expanded.has(entry.id)
               return (
                 <Fragment key={entry.id}>
-                  <div>
+                  <div className="audit-row">
                     <i>
                       <Icon size={15} />
                     </i>

@@ -1,5 +1,5 @@
 {
-  "name": "@sitekhata/mobile",
+  "name": "@gok-net/mobile",
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
@@ -15,7 +15,7 @@
     "@expo/metro-runtime": "~57.0.15",
     "@expo/ui": "~57.0.12",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@sitekhata/shared": "*",
+    "@gok-net/shared": "*",
     "@supabase/supabase-js": "^2.58.0",
     "expo": "~57.0.15",
     "expo-secure-store": "~57.0.1",

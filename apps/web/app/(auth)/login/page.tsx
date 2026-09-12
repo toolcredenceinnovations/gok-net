@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/client'
  */
 export default function LoginPage() {
   return (
-    <Suspense fallback={<Shell><h1>Sign in to SiteKhata</h1></Shell>}>
+    <Suspense fallback={<Shell><h1>Sign in to GOK-NET</h1></Shell>}>
       <LoginForm />
     </Suspense>
   )
@@ -49,7 +49,7 @@ function LoginForm() {
   return (
     <Shell>
       <p className="eyebrow">Welcome back</p>
-      <h1>Sign in to SiteKhata</h1>
+      <h1>Sign in to GOK-NET</h1>
       <p className="auth-description">Access the Gokulesh Group site expense ledger.</p>
 
       <form onSubmit={signIn} className="auth-form">
@@ -95,7 +95,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           <img src="/gokulesh-group-logo.svg" alt="Gokulesh Group mark" />
           <span>
             <strong>Gokulesh Group</strong>
-            <small>SiteKhata</small>
+            <small>GOK-NET</small>
           </span>
         </div>
         <div className="auth-quote">

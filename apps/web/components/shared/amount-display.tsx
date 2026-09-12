@@ -1,4 +1,4 @@
-import { formatAmount, formatLakh } from '@sitekhata/shared'
+import { formatAmount, formatLakh } from '@gok-net/shared'
 import { cn } from '@/lib/utils'
 
 /**
