@@ -201,6 +201,25 @@ Internally, `PinDialog` calls `/api/pin/verify`, which calls the Edge Function. 
 
 ---
 
+## Modals
+
+Every overlay dialog is built on `<Modal>` (`apps/web/components/shared/modal.tsx`). It owns the backdrop, the card, Escape-to-close, and backdrop-click-to-close. Never hand-roll a `fixed inset-0 … bg-black/40` overlay again — wrap the dialog's content in `<Modal>` instead.
+
+```typescript
+<Modal
+  open={open}
+  onClose={() => onOpenChange(false)}
+  title="Dialog title"
+  description="One line of context shown under the title."
+>
+  {/* form or content — Modal already renders the backdrop, card, and title/description block */}
+</Modal>
+```
+
+`PinDialog` is the one exception: its single-input layout predates `<Modal>` and stays as-is since it's the most sensitive, most-audited flow in the app — don't fold it in without good reason. Every other dialog (`HelpDialog`, `VoidDialog`'s reason step, the action-PIN settings form, anything new) should use `<Modal>`.
+
+---
+
 ## Error handling
 
 Wrap all Supabase calls and show a toast on failure. Never let errors fail silently.

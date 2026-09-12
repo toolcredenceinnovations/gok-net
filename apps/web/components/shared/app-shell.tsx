@@ -1,13 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, Bell, Building2, ChevronDown, ClipboardList, FileClock, HardHat, HelpCircle, Menu, Plus, Search, Settings, Tags, Users, WalletCards } from 'lucide-react'
+import { BarChart3, Building2, ClipboardList, FileClock, HelpCircle, Menu, Plus, Search, Tags, Users, WalletCards } from 'lucide-react'
 import { can, type Capability } from '@gok-net/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { HelpDialog } from '@/components/shared/help-dialog'
 import { UserAccountMenu } from '@/components/shared/user-account-menu'
+import { SiteSwitcher } from '@/components/shared/site-switcher'
+import { NotificationsBell } from '@/components/shared/notifications-bell'
 
 /**
  * Nav entries carry the capability that unlocks them, so a member never sees
@@ -33,6 +35,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const session = useSession()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        searchInputRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === href : pathname.startsWith(href)
@@ -50,11 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div><strong>Gokulesh Group</strong><span>GOK-NET</span></div>
         </div>
 
-        <div className="site-switcher">
-          <span className="site-icon"><HardHat size={17} /></span>
-          <span><small>Active site</small>Gokulesh Tulip</span>
-          {session.memberships.length > 1 && <ChevronDown size={16} />}
-        </div>
+        <SiteSwitcher />
 
         <nav aria-label="Primary navigation">
           <p className="nav-label">Workspace</p>
@@ -75,17 +85,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
         </nav>
 
-        <div className="sidebar-footer">
-          <button
-            type="button"
-            className="nav-item w-full appearance-none border-none bg-transparent text-left font-[inherit] cursor-pointer"
-            onClick={() => setHelpOpen(true)}
-          >
-            <HelpCircle size={18} />Help &amp; support
-          </button>
-          <Link className={`nav-item ${isActive('/settings') ? 'is-active' : ''}`} href="/settings"><Settings size={18} />Settings</Link>
-          <UserAccountMenu />
-        </div>
+        <p className="sidebar-credit">
+          Built with ❤︎ by
+          <br />
+          <a href="https://credenceinnovations.co" target="_blank" rel="noopener noreferrer">
+            credenceinnovations.co
+          </a>
+        </p>
       </aside>
 
       <section className="app-stage">
@@ -99,14 +105,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             }}
           >
             <Search size={18} />
-            <input aria-label="Search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search expenses, vendors or challans" />
-            <kbd>⌘ K</kbd>
+            <input
+              ref={searchInputRef}
+              aria-label="Search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search expenses, vendors or challans"
+            />
+            <span className="kbd-group" aria-hidden="true">
+              <kbd>⌘</kbd>
+              <kbd>K</kbd>
+            </span>
           </form>
           <div className="topbar-actions">
-            <button className="icon-button" aria-label="Notifications"><Bell size={19} /></button>
             {can(session.role, 'createExpense') && (
-              <Link className="primary-button compact" href="/expenses/new"><Plus size={17} /> Add expense</Link>
+              <Link className="cta-ghost" href="/expenses/new"><Plus size={17} /> Add expense</Link>
             )}
+            <button type="button" className="icon-button" aria-label="Help & support" onClick={() => setHelpOpen(true)}>
+              <HelpCircle size={19} />
+            </button>
+            <NotificationsBell />
+            <UserAccountMenu variant="header" />
           </div>
         </header>
         <main className="work-area">{children}</main>

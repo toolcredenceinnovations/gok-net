@@ -79,6 +79,8 @@ SUPABASE_SERVICE_ROLE_KEY    # for admin operations in edge functions
 | `POSTHOG_KEY` | Yes | PostHog project key |
 | `SENTRY_DSN` | Yes | Where Sentry sends errors |
 | `SENTRY_AUTH_TOKEN` | **NO** | Source map upload only; CI/build only |
+| `RESEND_API_KEY` | **NO** | Sends support + weekly-summary email via Resend |
+| `CRON_SECRET` | **NO** | Vercel Cron auth for `app/api/cron/*` (due reminders, weekly summary) |
 
 ---
 

@@ -9,7 +9,7 @@ import { ROLE_LABEL } from '@gok-net/shared'
 import { useSession } from '@/lib/auth/session-context'
 import { createClient } from '@/lib/supabase/client'
 
-export function UserAccountMenu() {
+export function UserAccountMenu({ variant = 'sidebar' }: { variant?: 'sidebar' | 'header' }) {
   const [open, setOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -51,33 +51,40 @@ export function UserAccountMenu() {
     router.refresh()
   }
 
+  const isHeader = variant === 'header'
+
   return (
-    <div className="user-menu-root" ref={rootRef}>
+    <div className={`user-menu-root ${isHeader ? 'user-menu-root-header' : ''}`} ref={rootRef}>
       {open && (
-        <div className="user-menu-popover" role="menu" aria-label="User menu">
+        <div className={`user-menu-popover ${isHeader ? 'user-menu-popover-header' : ''}`} role="menu" aria-label="User menu">
           <div className="user-menu-heading">
             <span className="avatar avatar-large">{initials || '·'}</span>
             <span><strong>{session.name}</strong><small>{session.email ?? session.phone ?? ROLE_LABEL[session.role]}</small></span>
           </div>
           <div className="user-menu-links">
-            <Link href="/profile" role="menuitem" onClick={() => setOpen(false)}><UserRound size={16} /><span><strong>Personal profile</strong><small>Name, contact and password</small></span></Link>
-            <Link href="/settings" role="menuitem" onClick={() => setOpen(false)}><Settings size={16} /><span><strong>Workspace settings</strong><small>Site and notification preferences</small></span></Link>
+            <Link href="/profile" role="menuitem" onClick={() => setOpen(false)}><UserRound size={18} strokeWidth={1.8} /><span><strong>Personal profile</strong><small>Name, contact and password</small></span></Link>
+            <Link href="/settings" role="menuitem" onClick={() => setOpen(false)}><Settings size={18} strokeWidth={1.8} /><span><strong>Workspace settings</strong><small>Site and notification preferences</small></span></Link>
           </div>
           <button type="button" className="user-menu-logout" role="menuitem" onClick={handleSignOut} disabled={signingOut}>
-            <LogOut size={16} /><span>{signingOut ? 'Logging out…' : 'Log out'}</span>
+            <LogOut size={18} strokeWidth={1.8} /><span>{signingOut ? 'Logging out…' : 'Log out'}</span>
           </button>
         </div>
       )}
       <button
         type="button"
-        className={`user-card ${open ? 'is-open' : ''}`}
+        className={`user-card ${isHeader ? 'user-card-compact' : ''} ${open ? 'is-open' : ''}`}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={isHeader ? `${session.name} account menu` : undefined}
         onClick={() => setOpen((value) => !value)}
       >
         <span className="avatar">{initials || '·'}</span>
-        <span><strong>{session.name}</strong><small>{ROLE_LABEL[session.role]}</small></span>
-        <ChevronDown className="user-menu-chevron" size={16} />
+        {!isHeader && (
+          <>
+            <span><strong>{session.name}</strong><small>{ROLE_LABEL[session.role]}</small></span>
+            <ChevronDown className="user-menu-chevron" size={16} />
+          </>
+        )}
       </button>
     </div>
   )

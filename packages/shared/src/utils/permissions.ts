@@ -34,6 +34,7 @@ export type Capability =
   | 'restoreEntry'
   | 'manageSubcategories'
   | 'manageUsers'
+  | 'manageSites'
   | 'viewAuditLog'
   | 'export'
   | 'viewDashboard'
@@ -52,6 +53,9 @@ const MATRIX: Record<Capability, readonly Role[]> = {
   restoreEntry: ['owner'],
   manageSubcategories: ['owner'],
   manageUsers: ['owner'],
+  // "owner updates site" is the only RLS policy that touches `sites` —
+  // matches manageUsers in being owner-only, not owner+admin.
+  manageSites: ['owner'],
   viewAuditLog: ['owner', 'admin'],
   export: ['owner', 'admin', 'viewer'],
   viewDashboard: ['owner', 'admin', 'viewer'],

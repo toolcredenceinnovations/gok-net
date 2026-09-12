@@ -59,4 +59,13 @@ export const queryKeys = {
 
   audit: (filters: { actorId?: string | null; action?: string | null }) =>
     ['audit', filters] as const,
+
+  sites: ['sites'] as const,
+
+  pinStatus: (siteId: string) => ['pin-status', siteId] as const,
+  pinHistory: (siteId: string) => ['pin-history', siteId] as const,
+
+  notifications: {
+    list: (userId: string) => ['notifications', 'list', userId] as const,
+  },
 } as const

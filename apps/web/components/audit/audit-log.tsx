@@ -2,6 +2,8 @@
 
 import { Fragment, useMemo, useState } from 'react'
 import {
+  Archive,
+  Building2,
   Calendar,
   Check,
   ChevronDown,
@@ -27,8 +29,12 @@ const ACTION_ICON: Record<string, LucideIcon> = {
   deleted: Trash2,
   pin_used: KeyRound,
   pin_failed: KeyRound,
+  pin_set: KeyRound,
+  pin_changed: KeyRound,
   login: ShieldCheck,
   member_added: UserPlus,
+  site_created: Building2,
+  site_archived: Archive,
 }
 
 function iconFor(action: string): LucideIcon {

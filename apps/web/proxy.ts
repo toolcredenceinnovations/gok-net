@@ -6,10 +6,16 @@ import type { Database } from '@gok-net/shared/types/database'
  * Next 16 renamed `middleware.ts` to `proxy.ts`; same runtime, same config.
  *
  * User routes require a valid Supabase session. `/operator/*` is unrelated
- * to user auth and keeps its own environment-secret gate.
+ * to user auth and keeps its own environment-secret gate. `/api/cron/*` is
+ * the same story: Vercel's scheduler calls these with no browser session at
+ * all (just `Authorization: Bearer $CRON_SECRET`), so without this exemption
+ * every scheduled run would get redirected to /login before the route's own
+ * CRON_SECRET check ever runs — that check is the real gate here.
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  if (pathname.startsWith('/api/cron/')) return NextResponse.next()
 
   if (pathname.startsWith('/operator')) {
     if (pathname === '/operator/login') return NextResponse.next()

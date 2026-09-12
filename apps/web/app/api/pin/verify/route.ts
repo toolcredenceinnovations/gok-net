@@ -138,9 +138,17 @@ export async function POST(request: Request) {
           )
         }
 
+        // The DB's cheque_fields_consistent/cheque_has_status checks require
+        // these to be NULL outside of 'cheque' mode — the form sends '' by
+        // default, which is not NULL and would fail the insert.
+        const chequeFields =
+          parsed.data.mode === 'cheque'
+            ? { cheque_no: parsed.data.cheque_no || null, cheque_bank: parsed.data.cheque_bank || null, cheque_status: parsed.data.cheque_status }
+            : { cheque_no: null, cheque_bank: null, cheque_status: null }
+
         const { data, error } = await admin
           .from('payments')
-          .insert({ ...parsed.data, created_by: user.id })
+          .insert({ ...parsed.data, ...chequeFields, created_by: user.id })
           .select()
           .single()
 
@@ -216,6 +224,39 @@ export async function POST(request: Request) {
 
         if (error) throw error
         if (!data) return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
+        return NextResponse.json({ data })
+      }
+
+      case 'archive_site': {
+        const id = typeof payload?.site_id === 'string' ? payload.site_id : siteId
+        if (id !== siteId) {
+          // Owners only archive their own active site from Settings today —
+          // no cross-site archive UI exists, so refuse anything else outright.
+          return NextResponse.json({ error: 'You can only archive your active site' }, { status: 403 })
+        }
+        if (role !== 'owner') {
+          return NextResponse.json({ error: 'Only an owner can archive a site' }, { status: 403 })
+        }
+
+        const { data, error } = await admin
+          .from('sites')
+          .update({ archived_at: new Date().toISOString() })
+          .eq('id', id)
+          .is('archived_at', null)
+          .select('id, name, archived_at')
+          .single()
+
+        if (error) throw error
+        if (!data) return NextResponse.json({ error: 'Site not found or already archived' }, { status: 404 })
+
+        await admin.from('audit_log').insert({
+          site_id: id,
+          actor_id: user.id,
+          action: 'site_archived',
+          entity: 'sites',
+          entity_id: id,
+        })
+
         return NextResponse.json({ data })
       }
 

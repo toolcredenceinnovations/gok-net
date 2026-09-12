@@ -15,7 +15,7 @@ export const track = {
 
   entryVoided: (p: { reason_given: boolean }) => posthog.capture('entry_voided', p),
 
-  pinUsed: (p: { action: 'mark_paid' | 'void' }) => posthog.capture('pin_used', p),
+  pinUsed: (p: { action: 'mark_paid' | 'void' | 'archive_site' }) => posthog.capture('pin_used', p),
 
   attachmentUploaded: (p: { type: 'invoice' | 'challan'; source: 'camera' | 'file' }) =>
     posthog.capture('attachment_uploaded', p),

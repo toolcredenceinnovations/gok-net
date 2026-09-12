@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__generate_typescript_types",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('@react-email/components/package.json'\\).version\\); console.log\\(require\\('@react-email/render/package.json'\\).version\\)\")",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

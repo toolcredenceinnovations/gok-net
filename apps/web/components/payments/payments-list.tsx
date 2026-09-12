@@ -75,7 +75,7 @@ export function PaymentsList() {
         </div>
         <div className="heading-actions">
           <button className="secondary-button" onClick={() => window.print()}>
-            Export
+            Print
           </button>
         </div>
       </header>

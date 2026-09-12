@@ -98,6 +98,27 @@ export const pinSchema = z.object({
   pin: z.string().regex(/^\d{6}$/, 'The PIN is 6 digits'),
 })
 
+const sixDigitPin = z.string().regex(/^\d{6}$/, 'The PIN is 6 digits')
+
+/** First-time setup has no currentPin; a change requires the one it replaces. */
+export const pinSetSchema = z.object({
+  newPin: sixDigitPin,
+  currentPin: sixDigitPin.nullish(),
+})
+export type PinSetInput = z.infer<typeof pinSetSchema>
+
+export const siteCreateSchema = z.object({
+  name: z.string().trim().min(2, 'Site needs a name').max(200),
+  address: z.string().trim().max(500).nullish().or(z.literal('')),
+})
+export type SiteCreateInput = z.infer<typeof siteCreateSchema>
+
+export const siteUpdateSchema = z.object({
+  name: z.string().trim().min(2, 'Site needs a name').max(200),
+  address: z.string().trim().max(500).nullish().or(z.literal('')),
+})
+export type SiteUpdateInput = z.infer<typeof siteUpdateSchema>
+
 export const subcategorySchema = z.object({
   category_id: uuid,
   name: z.string().trim().min(1, 'Subcategory needs a name').max(100),

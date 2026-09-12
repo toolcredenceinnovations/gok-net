@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { ArrowRight, ArrowUpRight, ChevronDown, Download, MoreHorizontal, Plus, ReceiptIndianRupee, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, ChevronDown, Download, Plus, ReceiptIndianRupee, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { useMonthSummary, useSpendTrend } from '@/lib/hooks/use-dashboard'
@@ -93,7 +93,7 @@ export default function DashboardPage() {
           <p className="page-subtitle">Here&rsquo;s what is happening across {session.siteName}.</p>
         </div>
         <div className="heading-actions">
-          <button className="secondary-button" onClick={() => window.print()}><Download size={17} /> Export</button>
+          <button className="secondary-button" onClick={() => window.print()}><Download size={17} /> Print</button>
           <Link className="primary-button" href="/expenses/new"><Plus size={18} /> Add expense</Link>
         </div>
       </section>
@@ -261,7 +261,7 @@ export default function DashboardPage() {
                 <span>{expense.categories?.name ?? '—'}</span>
                 <span><StatusBadge status={expense.status} /></span>
                 <span><AmountDisplay amount={expense.amount} size="md" /></span>
-                <span className="icon-button" aria-hidden><MoreHorizontal size={18} /></span>
+                <span className="icon-button" aria-hidden><ArrowRight size={16} /></span>
               </Link>
             ))
           ) : (

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { track } from '@/lib/analytics'
 
-export type PinAction = 'record_payment' | 'void_expense' | 'void_payment'
+export type PinAction = 'record_payment' | 'void_expense' | 'void_payment' | 'archive_site'
 
 /**
  * The single entry point for every PIN-gated action. Never build another
@@ -49,7 +49,9 @@ export function PinDialog({
         return
       }
 
-      track.pinUsed({ action: action === 'record_payment' ? 'mark_paid' : 'void' })
+      track.pinUsed({
+        action: action === 'record_payment' ? 'mark_paid' : action === 'archive_site' ? 'archive_site' : 'void',
+      })
       setPin('')
       onOpenChange(false)
       onSuccess?.(body?.data)
@@ -76,7 +78,9 @@ export function PinDialog({
         <p className="mt-1 text-sm text-neutral-600">
           {action === 'record_payment'
             ? 'This records a payment against the entry.'
-            : 'This voids the entry. It stays in the record with your reason.'}
+            : action === 'archive_site'
+              ? 'This archives the site. Its records are kept, but it moves out of everyday use.'
+              : 'This voids the entry. It stays in the record with your reason.'}
         </p>
 
         <input
