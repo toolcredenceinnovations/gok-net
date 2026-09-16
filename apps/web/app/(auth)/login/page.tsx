@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowRight, CheckCircle2, LockKeyhole } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Loader2, LockKeyhole } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 /**
@@ -38,12 +38,14 @@ function LoginForm() {
       password,
     })
 
-    if (error) setError(error.message)
-    else {
-      router.replace(next)
-      router.refresh()
+    if (error) {
+      setError(error.message)
+      setBusy(false)
+      return
     }
-    setBusy(false)
+
+    router.replace(next)
+    router.refresh()
   }
 
   return (
@@ -76,8 +78,21 @@ function LoginForm() {
           className="auth-input"
         />
         {error && <p className="auth-error">{error}</p>}
-        <button type="submit" disabled={!email || !password || busy} className="primary-button auth-submit">
-          {busy ? 'Signing in…' : <>Sign in <ArrowRight size={16} /></>}
+        <button
+          type="submit"
+          disabled={!email || !password || busy}
+          aria-busy={busy}
+          className="primary-button auth-submit"
+        >
+          {busy ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Signing in…
+            </>
+          ) : (
+            <>
+              Sign in <ArrowRight size={16} />
+            </>
+          )}
         </button>
       </form>
       <p className="auth-security">

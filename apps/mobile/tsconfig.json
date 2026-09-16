@@ -3,10 +3,21 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@gok-net/shared": ["../../packages/shared/src/index.ts"],
-      "@gok-net/shared/*": ["../../packages/shared/src/*"]
+      "@gok-net/shared": [
+        "../../packages/shared/src/index.ts"
+      ],
+      "@gok-net/shared/*": [
+        "../../packages/shared/src/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

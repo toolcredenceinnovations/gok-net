@@ -89,14 +89,13 @@ export function CategoriesManage() {
         </div>
       </header>
 
-      {addOpen && (
-        <AddSubcategoryForm
-          categories={categories}
-          defaultCategoryId={addCategoryId}
-          onCancel={() => setAddOpen(false)}
-          onCreated={() => setAddOpen(false)}
-        />
-      )}
+      <AddSubcategoryForm
+        open={addOpen}
+        categories={categories}
+        defaultCategoryId={addCategoryId}
+        onCancel={() => setAddOpen(false)}
+        onCreated={() => setAddOpen(false)}
+      />
 
       <div className="category-admin-grid">
         {categories.map((category, index) => {

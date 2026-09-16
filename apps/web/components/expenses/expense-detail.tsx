@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -8,6 +9,7 @@ import { formatDate } from '@gok-net/shared'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { VoidDialog } from '@/components/shared/void-dialog'
+import { Drawer } from '@/components/shared/drawer'
 import { useExpense } from '@/lib/hooks/use-expenses'
 import { usePayments, useInvalidateAfterPinAction } from '@/lib/hooks/use-payments'
 import { useCan } from '@/lib/auth/session-context'
@@ -24,15 +26,43 @@ function Info({ label, value }: { label: string; value: string }) {
 }
 
 function PaymentReceipt({ paymentId }: { paymentId: string }) {
+  const [open, setOpen] = useState(false)
   const { data: attachments = [] } = useAttachments({ paymentId })
   const receipt = attachments[0]
   const { data: signedUrl } = useSignedUrl(receipt?.file_path ?? null)
 
   if (!receipt || !signedUrl) return null
+
+  const isImage = receipt.mime_type?.startsWith('image/')
+  const isPdf = receipt.mime_type === 'application/pdf'
+
   return (
-    <a href={signedUrl} target="_blank" rel="noreferrer" className="back-link">
-      <ExternalLink size={13} /> Receipt
-    </a>
+    <>
+      <button type="button" className="back-link" onClick={() => setOpen(true)}>
+        <ExternalLink size={13} /> Receipt
+      </button>
+
+      <Drawer open={open} onClose={() => setOpen(false)} title="Receipt" className="max-w-xl">
+        <div className="flex h-full flex-col gap-4">
+          <div className="flex flex-1 items-center justify-center overflow-auto rounded-lg bg-neutral-100">
+            {isImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={signedUrl} alt="Payment receipt" className="max-h-full max-w-full object-contain" />
+            ) : isPdf ? (
+              <iframe src={signedUrl} title="Payment receipt" className="h-full min-h-[70vh] w-full" />
+            ) : (
+              <div className="p-8 text-center text-sm text-neutral-600">
+                <FileText size={28} className="mx-auto mb-2" />
+                Preview isn&apos;t available for this file type.
+              </div>
+            )}
+          </div>
+          <a href={signedUrl} target="_blank" rel="noreferrer" className="secondary-button self-start">
+            <ExternalLink size={14} /> Open in new tab
+          </a>
+        </div>
+      </Drawer>
+    </>
   )
 }
 
