@@ -15,10 +15,15 @@ export function VendorCombobox({
   value,
   onSelect,
   initialLabel,
+  categoryId,
+  subcategoryId,
 }: {
   value: string | null
   onSelect: (vendor: { id: string; name: string } | null) => void
   initialLabel?: string | null
+  /** Stamped onto a vendor created here, so its category comes from the expense being entered. */
+  categoryId?: string | null
+  subcategoryId?: string | null
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -38,7 +43,14 @@ export function VendorCombobox({
 
   async function handleCreate() {
     try {
-      const created = await createVendor.mutateAsync({ name: trimmed, phone: '', gstin: '', notes: '' })
+      const created = await createVendor.mutateAsync({
+        name: trimmed,
+        phone: '',
+        gstin: '',
+        notes: '',
+        category_id: categoryId || null,
+        subcategory_id: subcategoryId || null,
+      })
       select(created)
       toast.success(`${created.name} added`)
     } catch (error) {

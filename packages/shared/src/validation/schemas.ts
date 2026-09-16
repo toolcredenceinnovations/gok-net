@@ -85,6 +85,8 @@ export const vendorSchema = z.object({
     .nullish()
     .or(z.literal('')),
   notes: z.string().trim().max(1000).nullish(),
+  category_id: uuid.nullish(),
+  subcategory_id: uuid.nullish(),
 })
 export type VendorInput = z.infer<typeof vendorSchema>
 

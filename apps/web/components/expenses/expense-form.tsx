@@ -47,6 +47,7 @@ export function ExpenseForm({ expense, defaultVendorId }: { expense?: ExpenseRow
   })
 
   const categoryId = watch('category_id')
+  const subcategoryId = watch('subcategory_id')
   const { data: subcategories = [] } = useSubcategories(categoryId || null)
 
   const backHref = isEdit && expense ? `/expenses/${expense.id}` : '/expenses'
@@ -160,6 +161,8 @@ export function ExpenseForm({ expense, defaultVendorId }: { expense?: ExpenseRow
                     value={field.value ?? null}
                     onSelect={(vendor) => field.onChange(vendor?.id ?? null)}
                     initialLabel={expense?.vendors?.name}
+                    categoryId={categoryId}
+                    subcategoryId={subcategoryId}
                   />
                 )}
               />

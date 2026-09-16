@@ -15,6 +15,8 @@ export interface Vendor {
   gstin: string | null
   notes: string | null
   archived_at: string | null
+  category_id: string | null
+  subcategory_id: string | null
 }
 
 /** Totals from v_vendor_totals — "how much did I pay ABC Traders?" in one query. */
@@ -28,6 +30,10 @@ export interface VendorTotals {
   outstanding: number
   last_transaction_date: string | null
   archived_at: string | null
+  category_id: string | null
+  category_name: string | null
+  subcategory_id: string | null
+  subcategory_name: string | null
 }
 
 /**
@@ -42,7 +48,7 @@ export function useVendors(search?: string, includeArchived = false) {
     queryFn: async (): Promise<Vendor[]> => {
       let query = supabase
         .from('vendors')
-        .select('id, name, phone, gstin, notes, archived_at')
+        .select('id, name, phone, gstin, notes, archived_at, category_id, subcategory_id')
         .order('name')
         .limit(50)
 
@@ -68,7 +74,7 @@ export function useVendorTotals() {
         await supabase
           .from('v_vendor_totals')
           .select(
-            'vendor_id, vendor_name, phone, transaction_count, total_billed, total_paid, outstanding, last_transaction_date, archived_at'
+            'vendor_id, vendor_name, phone, transaction_count, total_billed, total_paid, outstanding, last_transaction_date, archived_at, category_id, category_name, subcategory_id, subcategory_name'
           )
           .order('outstanding', { ascending: false })
       ) as VendorTotals[],
@@ -84,7 +90,7 @@ export function useVendor(id: string) {
       unwrap(
         await supabase
           .from('vendors')
-          .select('id, name, phone, gstin, notes, archived_at')
+          .select('id, name, phone, gstin, notes, archived_at, category_id, subcategory_id')
           .eq('id', id)
           .single()
       ),
@@ -113,8 +119,10 @@ export function useCreateVendor() {
             phone: input.phone || null,
             gstin: input.gstin || null,
             notes: input.notes || null,
+            category_id: input.category_id || null,
+            subcategory_id: input.subcategory_id || null,
           })
-          .select('id, name, phone, gstin, notes, archived_at')
+          .select('id, name, phone, gstin, notes, archived_at, category_id, subcategory_id')
           .single()
       ),
     onSuccess: () => {
@@ -138,7 +146,7 @@ export function useArchiveVendor() {
           .from('vendors')
           .update({ archived_at: archived ? new Date().toISOString() : null })
           .eq('id', id)
-          .select('id, name, phone, gstin, notes, archived_at')
+          .select('id, name, phone, gstin, notes, archived_at, category_id, subcategory_id')
           .single()
       ),
     onSuccess: (vendor) => {
@@ -164,7 +172,7 @@ export function useUpdateVendor() {
             notes: input.notes || null,
           })
           .eq('id', id)
-          .select('id, name, phone, gstin, notes, archived_at')
+          .select('id, name, phone, gstin, notes, archived_at, category_id, subcategory_id')
           .single()
       ),
     onSuccess: (vendor) => {

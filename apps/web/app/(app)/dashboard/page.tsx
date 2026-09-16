@@ -38,6 +38,15 @@ function shortMonthLabel(month: string): string {
   return new Date(Date.UTC(year, mon - 1, 1)).toLocaleDateString('en-IN', { month: 'short', timeZone: 'UTC' })
 }
 
+function recentMonths(count: number): string[] {
+  const current = currentMonth()
+  const [year, mon] = current.split('-').map(Number)
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(Date.UTC(year, mon - 1 - i, 1))
+    return d.toISOString().slice(0, 7)
+  })
+}
+
 function getChartPaths(values: readonly number[]) {
   const max = Math.max(1, ...values)
   const points = values.map((value, index) => ({
@@ -57,12 +66,15 @@ function getChartPaths(values: readonly number[]) {
 export default function DashboardPage() {
   const session = useSession()
   const [month] = useState(currentMonth())
+  const [categoryMonth, setCategoryMonth] = useState(currentMonth())
   const [trendWindow, setTrendWindow] = useState<TrendWindow>('12')
   const [showAll, setShowAll] = useState(false)
 
   const { data: summary, isLoading: summaryLoading } = useMonthSummary(month)
+  const { data: categorySummary, isLoading: categorySummaryLoading } = useMonthSummary(categoryMonth)
   const { data: trend = [], isLoading: trendLoading } = useSpendTrend(12)
   const { data: recentExpenses = [], isLoading: expensesLoading } = useExpenses({ month })
+  const categoryMonthOptions = useMemo(() => recentMonths(12), [])
 
   const windowedTrend = useMemo(() => trend.slice(-TREND_WINDOWS[trendWindow].months), [trend, trendWindow])
   const chartPaths = useMemo(() => getChartPaths(windowedTrend.map((point) => point.total)), [windowedTrend])
@@ -75,7 +87,7 @@ export default function DashboardPage() {
   const paidPct = summary && summary.totalSpent > 0 ? Math.round((summary.totalPaid / summary.totalSpent) * 100) : 0
   const outstandingPct = summary && summary.totalSpent > 0 ? Math.round((summary.totalOutstanding / summary.totalSpent) * 100) : 0
   const openCount = summary?.byCategory.reduce((n, c) => n + (c.outstanding_amount > 0 ? 1 : 0), 0) ?? 0
-  const maxCategory = Math.max(1, ...(summary?.byCategory.map((c) => c.total_amount) ?? [0]))
+  const maxCategory = Math.max(1, ...(categorySummary?.byCategory.map((c) => c.total_amount) ?? [0]))
 
   const greetingHour = new Date().getHours()
   const greeting = greetingHour < 12 ? 'Good morning' : greetingHour < 17 ? 'Good afternoon' : 'Good evening'
@@ -202,14 +214,33 @@ export default function DashboardPage() {
           <div className="panel-heading">
             <div>
               <h2>Spend by category</h2>
-              <p>{monthLabel(month)} allocation</p>
+              <p>{monthLabel(categoryMonth)} allocation</p>
             </div>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button className="plain-button trend-range-trigger" aria-label={`Change category month. Current: ${monthLabel(categoryMonth)}`}>
+                  {monthLabel(categoryMonth)} <ChevronDown size={14} />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content className="trend-range-menu" align="end" sideOffset={8}>
+                  <DropdownMenu.RadioGroup value={categoryMonth} onValueChange={setCategoryMonth}>
+                    {categoryMonthOptions.map((option) => (
+                      <DropdownMenu.RadioItem className="trend-range-option" value={option} key={option}>
+                        <DropdownMenu.ItemIndicator className="trend-range-check">✓</DropdownMenu.ItemIndicator>
+                        {monthLabel(option)}
+                      </DropdownMenu.RadioItem>
+                    ))}
+                  </DropdownMenu.RadioGroup>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
           <div className="category-list">
-            {summaryLoading ? (
+            {categorySummaryLoading ? (
               <p className="list-loading">Loading…</p>
-            ) : summary && summary.byCategory.length ? (
-              summary.byCategory.map((item, index) => (
+            ) : categorySummary && categorySummary.byCategory.length ? (
+              categorySummary.byCategory.map((item, index) => (
                 <div className="category-row" key={item.category_id}>
                   <div>
                     <span>{item.category_name}</span>
@@ -218,11 +249,11 @@ export default function DashboardPage() {
                   <div className="category-track">
                     <i className={CATEGORY_TONES[index % CATEGORY_TONES.length]} style={{ width: `${Math.round((item.total_amount / maxCategory) * 100)}%` }} />
                   </div>
-                  <small>{Math.round((item.total_amount / (summary.totalSpent || 1)) * 100)}%</small>
+                  <small>{Math.round((item.total_amount / (categorySummary.totalSpent || 1)) * 100)}%</small>
                 </div>
               ))
             ) : (
-              <p className="list-loading">No spend recorded yet this month.</p>
+              <p className="list-loading">No spend recorded for {monthLabel(categoryMonth)}.</p>
             )}
           </div>
           <Link className="panel-link" href="/expenses">View all expenses <ArrowRight size={15} /></Link>

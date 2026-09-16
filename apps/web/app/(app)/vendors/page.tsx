@@ -2,10 +2,14 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ArrowRight, Building2, Clock3, Plus, ReceiptText, Search, X } from 'lucide-react'
+import { ArrowRight, Building2, Clock3, LayoutGrid, Plus, ReceiptText, Rows3, Search, X } from 'lucide-react'
 import { AmountDisplay } from '@/components/shared/amount-display'
 import { useVendorTotals } from '@/lib/hooks/use-vendors'
+import { useCategories } from '@/lib/hooks/use-categories'
 import { useCan } from '@/lib/auth/session-context'
+
+const ALL_CATEGORIES = 'All'
+type ViewMode = 'card' | 'list'
 
 function MiniStat({ label, value, icon }: { label: string; value: React.ReactNode; icon: React.ReactNode }) {
   return (
@@ -38,16 +42,20 @@ function EmptyState({ query, onClear }: { query: string; onClear: () => void }) 
 
 export default function VendorsPage() {
   const { data: vendors = [], isLoading } = useVendorTotals()
+  const { data: categories = [] } = useCategories()
   const [query, setQuery] = useState('')
   const [showArchived, setShowArchived] = useState(false)
+  const [categoryFilter, setCategoryFilter] = useState<string>(ALL_CATEGORIES)
+  const [view, setView] = useState<ViewMode>('card')
   const canCreate = useCan('createVendor')
 
   const filtered = useMemo(
     () =>
       vendors
         .filter((vendor) => showArchived || !vendor.archived_at)
-        .filter((vendor) => vendor.vendor_name.toLowerCase().includes(query.toLowerCase())),
-    [vendors, query, showArchived]
+        .filter((vendor) => vendor.vendor_name.toLowerCase().includes(query.toLowerCase()))
+        .filter((vendor) => categoryFilter === ALL_CATEGORIES || vendor.category_id === categoryFilter),
+    [vendors, query, showArchived, categoryFilter]
   )
 
   const activeCount = vendors.filter((vendor) => !vendor.archived_at).length
@@ -94,11 +102,44 @@ export default function VendorsPage() {
           >
             {showArchived ? 'Hide archived' : 'Show archived'}
           </button>
+          <div className="view-toggle" role="tablist" aria-label="Vendor view">
+            <button
+              type="button"
+              className={view === 'card' ? 'is-active' : ''}
+              aria-label="Card view"
+              onClick={() => setView('card')}
+            >
+              <LayoutGrid size={15} />
+            </button>
+            <button
+              type="button"
+              className={view === 'list' ? 'is-active' : ''}
+              aria-label="List view"
+              onClick={() => setView('list')}
+            >
+              <Rows3 size={15} />
+            </button>
+          </div>
+        </div>
+
+        <div className="filter-tabs">
+          <button className={categoryFilter === ALL_CATEGORIES ? 'is-active' : ''} onClick={() => setCategoryFilter(ALL_CATEGORIES)}>
+            All
+          </button>
+          {categories.map((category) => (
+            <button
+              className={categoryFilter === category.id ? 'is-active' : ''}
+              onClick={() => setCategoryFilter(category.id)}
+              key={category.id}
+            >
+              {category.name}
+            </button>
+          ))}
         </div>
 
         {isLoading ? (
           <p className="list-loading">Loading vendors…</p>
-        ) : filtered.length ? (
+        ) : filtered.length ? view === 'card' ? (
           <div className="vendor-grid">
             {filtered.map((vendor) => (
               <Link href={`/vendors/${vendor.vendor_id}`} className="vendor-card" key={vendor.vendor_id}>
@@ -110,7 +151,8 @@ export default function VendorsPage() {
                 </div>
                 <h3>{vendor.vendor_name}</h3>
                 <p>
-                  {vendor.transaction_count} expense{vendor.transaction_count === 1 ? '' : 's'}
+                  {vendor.category_name ?? 'Uncategorised'} · {vendor.transaction_count} expense
+                  {vendor.transaction_count === 1 ? '' : 's'}
                 </p>
                 <div>
                   <span>
@@ -126,6 +168,40 @@ export default function VendorsPage() {
                   {vendor.phone || 'No phone on file'}
                   <ArrowRight size={15} />
                 </footer>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="product-table vendor-list">
+            <div className="product-table-head">
+              <span>Vendor</span>
+              <span>Category</span>
+              <span>Expenses</span>
+              <span>Billed</span>
+              <span>Outstanding</span>
+              <span />
+            </div>
+            {filtered.map((vendor) => (
+              <Link className="product-row" href={`/vendors/${vendor.vendor_id}`} key={vendor.vendor_id}>
+                <span className="primary-cell">
+                  <i>{vendor.vendor_name[0]?.toUpperCase()}</i>
+                  <span>
+                    <strong>{vendor.vendor_name}</strong>
+                    <small>{vendor.phone || 'No phone on file'}</small>
+                  </span>
+                </span>
+                <span>{vendor.category_name ?? '—'}</span>
+                <span>
+                  {vendor.transaction_count} expense{vendor.transaction_count === 1 ? '' : 's'}
+                </span>
+                <span className="amount-cell">
+                  <AmountDisplay amount={vendor.total_billed} size="md" />
+                </span>
+                <span className="amount-cell">
+                  <AmountDisplay amount={vendor.outstanding} size="md" />
+                  {vendor.archived_at && <small>Archived</small>}
+                </span>
+                <ArrowRight size={16} />
               </Link>
             ))}
           </div>

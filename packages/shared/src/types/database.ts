@@ -645,6 +645,7 @@ export type Database = {
       vendors: {
         Row: {
           archived_at: string | null
+          category_id: string | null
           created_at: string
           gstin: string | null
           id: string
@@ -652,9 +653,11 @@ export type Database = {
           notes: string | null
           phone: string | null
           site_id: string
+          subcategory_id: string | null
         }
         Insert: {
           archived_at?: string | null
+          category_id?: string | null
           created_at?: string
           gstin?: string | null
           id?: string
@@ -662,9 +665,11 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           site_id: string
+          subcategory_id?: string | null
         }
         Update: {
           archived_at?: string | null
+          category_id?: string | null
           created_at?: string
           gstin?: string | null
           id?: string
@@ -672,6 +677,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           site_id?: string
+          subcategory_id?: string | null
         }
         Relationships: [
           {
@@ -679,6 +685,20 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
             referencedColumns: ["id"]
           },
         ]
@@ -854,10 +874,14 @@ export type Database = {
       v_vendor_totals: {
         Row: {
           archived_at: string | null
+          category_id: string | null
+          category_name: string | null
           last_transaction_date: string | null
           outstanding: number | null
           phone: string | null
           site_id: string | null
+          subcategory_id: string | null
+          subcategory_name: string | null
           total_billed: number | null
           total_paid: number | null
           transaction_count: number | null
@@ -870,6 +894,20 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
             referencedColumns: ["id"]
           },
         ]
